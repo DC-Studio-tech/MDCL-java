@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" 
+      fx:controller="org.mcdcl.controller.LoginController"
+      spacing="10" alignment="CENTER" styleClass="login-panel">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+    
+    <Label text="MDCL启动器" styleClass="title-label"/>
+    
+    <TextField fx:id="usernameField" promptText="用户名" styleClass="input-field"/>
+    
+    <PasswordField fx:id="passwordField" promptText="密码" styleClass="input-field"/>
+    
+    <HBox spacing="10" alignment="CENTER">
+        <CheckBox fx:id="rememberMe" text="记住我" styleClass="remember-checkbox"/>
+    </HBox>
+    
+    <Button fx:id="loginButton" text="登录" onAction="#handleLogin" styleClass="login-button"
+            maxWidth="Infinity"/>
+    
+    <Hyperlink fx:id="registerLink" text="注册账号" onAction="#handleRegister"
+               alignment="CENTER"/>
+    
+    <Label fx:id="statusLabel" styleClass="status-label"/>
+</VBox>

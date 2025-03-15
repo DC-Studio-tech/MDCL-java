@@ -1,0 +1,265 @@
+.login-panel {
+    -fx-background-color: linear-gradient(to bottom right, rgba(46, 52, 64, 0.8), #2E3440);
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.4), 20, 0, 0, 0);
+    -fx-background-radius: 15;
+    -fx-border-color: rgba(0, 255, 163, 0.3);
+    -fx-border-radius: 15;
+    -fx-border-width: 1.5;
+    -fx-padding: 25;
+}
+
+.title-label {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #FFFFFF;
+    -fx-padding: 0 0 25 0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,255,163,0.5), 10, 0, 0, 0);
+}
+
+.input-field {
+    -fx-pref-width: 280px;
+    -fx-pref-height: 40px;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-background-color: rgba(46, 52, 64, 0.8);
+    -fx-border-color: #00FFA3;
+    -fx-border-width: 1;
+    -fx-padding: 8;
+    -fx-text-fill: #FFFFFF;
+}
+
+.login-button {
+    -fx-background-color: #00FFA3;
+    -fx-text-fill: #2E3440;
+    -fx-font-weight: bold;
+    -fx-pref-height: 40px;
+    -fx-background-radius: 8;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,255,163,0.4), 8, 0, 0, 0);
+    -fx-cursor: hand;
+    -fx-transition: all 0.15s ease-in-out;
+}
+
+.login-button:hover {
+    -fx-background-color: derive(#00FFA3, -10%);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,255,163,0.6), 12, 0, 0, 0);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.login-button:pressed {
+    -fx-background-color: derive(#00FFA3, -20%);
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,255,163,0.3), 4, 0, 0, 0);
+}
+
+.remember-checkbox {
+    -fx-text-fill: #FFFFFF;
+}
+
+.remember-checkbox .box {
+    -fx-background-color: rgba(46, 52, 64, 0.8);
+    -fx-border-color: #00FFA3;
+}
+
+.remember-checkbox:selected .box {
+    -fx-background-color: #00FFA3;
+}
+
+.status-label {
+    -fx-text-fill: #FF004D;
+    -fx-font-size: 13px;
+    -fx-effect: dropshadow(three-pass-box, rgba(255,0,77,0.3), 5, 0, 0, 0);
+}
+
+.hyperlink {
+    -fx-text-fill: #00FFA3;
+    -fx-border-color: transparent;
+    -fx-padding: 4 0 0 0;
+}
+
+.hyperlink:hover {
+    -fx-text-fill: derive(#00FFA3, -10%);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,255,163,0.4), 5, 0, 0, 0);
+}
+
+.preset-button {
+    -fx-background-color: #E3F2FD;
+    -fx-text-fill: #1976D2;
+    -fx-padding: 8 12;
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-border-color: #BBDEFB;
+    -fx-border-width: 1;
+    -fx-cursor: hand;
+}
+
+.preset-button {
+    -fx-background-color: #E3F2FD;
+    -fx-text-fill: #1976D2;
+    -fx-padding: 8 12;
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-border-color: #BBDEFB;
+    -fx-border-width: 1;
+    -fx-cursor: hand;
+    -fx-transition: all 0.2s ease-in-out;
+}
+
+.preset-button:hover {
+    -fx-background-color: #BBDEFB;
+    -fx-border-color: #90CAF9;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+.preset-button:pressed {
+    -fx-background-color: #90CAF9;
+    -fx-scale-x: 0.95;
+    -fx-scale-y: 0.95;
+}
+
+.preset-button:disabled {
+    -fx-background-color: #E0E0E0;
+    -fx-text-fill: #9E9E9E;
+    -fx-border-color: #BDBDBD;
+    -fx-opacity: 0.7;
+}
+
+/* 主界面样式 */
+.main-view {
+    -fx-background-color: linear-gradient(to bottom right, #7D00FF, #2E3440);
+    -fx-padding: 0;
+}
+
+/* 导航栏样式 */
+.navigation-bar {
+    -fx-background-color: rgba(46, 52, 64, 0.8);
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.4), 10, 0, 0, 0);
+}
+
+.section-title {
+    -fx-text-fill: #00FFA3;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 10 0 5 10;
+}
+
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #FFFFFF;
+    -fx-padding: 8 15;
+    -fx-alignment: CENTER_LEFT;
+    -fx-cursor: hand;
+}
+
+.nav-button:hover {
+    -fx-background-color: rgba(0, 255, 163, 0.2);
+}
+
+.nav-button:pressed {
+    -fx-background-color: rgba(0, 255, 163, 0.3);
+}
+
+.header-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #00FFA3;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,255,163,0.5), 10, 0, 0, 0);
+}
+
+/* 标签页样式 */
+.tab-pane {
+    -fx-background-color: transparent;
+}
+
+.tab-pane .tab-header-area {
+    -fx-padding: 5;
+}
+
+.tab-pane .tab {
+    -fx-background-color: rgba(125, 0, 255, 0.3);
+    -fx-background-radius: 5 5 0 0;
+    -fx-padding: 8 15;
+}
+
+.tab-pane .tab:selected {
+    -fx-background-color: rgba(0, 255, 163, 0.3);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,255,163,0.4), 8, 0, 0, 0);
+}
+
+.tab-pane .tab:hover {
+    -fx-background-color: rgba(125, 0, 255, 0.5);
+}
+
+.tab-pane .tab-label {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 3, 0, 0, 0);
+}
+
+.tab-pane .tab:selected .tab-label {
+    -fx-text-fill: #FFFFFF;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,255,163,0.5), 5, 0, 0, 0);
+}
+
+/* 标签页内容区域样式 */
+.tab-pane .tab-content-area {
+    -fx-background-color: rgba(46, 52, 64, 0.3);
+    -fx-background-radius: 0 0 5 5;
+    -fx-padding: 15;
+}
+
+/* 欢迎文本样式 */
+.welcome-label {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,255,163,0.5), 8, 0, 0, 0);
+}
+
+/* 用户信息区域样式 */
+.user-info-label {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 14px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 3, 0, 0, 0);
+}
+
+/* 通用标签样式 */
+.label {
+    -fx-text-fill: #FFFFFF;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 3, 0, 0, 0);
+}
+
+/* 滑块样式 */
+.slider .track {
+    -fx-background-color: #E0E0E0;
+    -fx-background-radius: 2;
+}
+
+.slider .thumb {
+    -fx-background-color: #2196F3;
+    -fx-background-radius: 50%;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 3, 0, 0, 0);
+}
+
+.slider .thumb:hover {
+    -fx-background-color: #1976D2;
+}
+
+/* 文本框样式 */
+.text-field {
+    -fx-background-color: #2E3440;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color: #00FFA3;
+    -fx-border-width: 1;
+    -fx-padding: 5 10;
+    -fx-text-fill: #FFFFFF;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,255,163,0.2), 3, 0, 0, 0);
+}
+
+.text-field:focused {
+    -fx-border-color: #00FFA3;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,255,163,0.4), 5, 0, 0, 0);
+}

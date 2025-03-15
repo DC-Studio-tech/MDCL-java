@@ -22,8 +22,8 @@ public class AboutView extends VBox {
 
         // 描述信息
         Label descriptionLabel = new Label(
-            "MDCL (Minecraft Development Client Launcher) 是一个开源的Minecraft启动器，" +
-            "旨在为玩家提供简单、快速、安全的游戏启动体验。"
+            "Dimension Collapsed Launcher 是一个开源的Minecraft启动器，" +
+            "维度折叠启动器是一款专为Minecraft玩家设计的轻量级启动器，支持快速启动游戏、管理模组和配置文件。无论是单机游玩还是连接服务器，都能为您提供流畅的体验。"
         );
         descriptionLabel.setWrapText(true);
         descriptionLabel.setTextAlignment(TextAlignment.CENTER);

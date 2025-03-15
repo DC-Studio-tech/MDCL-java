@@ -8,6 +8,11 @@ import javafx.scene.control.Separator;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import org.mcdcl.launcher.GameLauncher;
+import org.to2mbn.jmccc.launch.LaunchException;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import java.io.IOException;
 
 public class MainView extends BorderPane {
     private VBox navigationBar;
@@ -19,6 +24,8 @@ public class MainView extends BorderPane {
     private VBox generalSection;
     private Button backButton;
     private Button launchButton;
+    private SettingsView settingsView;
+    private GameLauncher gameLauncher;
 
     public MainView() {
         // 初始化组件
@@ -68,6 +75,7 @@ public class MainView extends BorderPane {
         // 创建启动游戏按钮
         launchButton = new Button("启动游戏");
         launchButton.getStyleClass().addAll("launch-button", "nav-button");
+        launchButton.setOnAction(event -> launchGame());
         StackPane.setAlignment(launchButton, Pos.BOTTOM_RIGHT);
         StackPane.setMargin(launchButton, new Insets(0, 20, 20, 0));
 
@@ -76,7 +84,7 @@ public class MainView extends BorderPane {
         Button settingsGeneralButton = createNavButton("常规设置");
         settingsGeneralButton.setOnAction(event -> {
             contentArea.getChildren().clear();
-            SettingsView settingsView = new SettingsView();
+            settingsView = new SettingsView();
             contentArea.getChildren().addAll(settingsView, backButton);
             backButton.setVisible(true);
         });
@@ -143,6 +151,60 @@ public class MainView extends BorderPane {
         welcomeContent.getChildren().add(new Label("欢迎使用MDCL启动器"));
         contentArea.getChildren().addAll(welcomeContent, launchButton);
         backButton.setVisible(false);
+    }
+
+    private void launchGame() {
+        if (settingsView == null) {
+            showAlert("请先配置启动器设置", "请在常规设置中配置Java路径和启动参数");
+            return;
+        }
+
+        String javaPath = settingsView.getJavaPathComboBox().getValue();
+        if (javaPath == null || javaPath.isEmpty()) {
+            showAlert("Java路径未配置", "请在常规设置中选择或配置Java路径");
+            return;
+        }
+
+        try {
+            int maxMemory = Integer.parseInt(settingsView.getMaxMemoryField().getText());
+            String jvmArgs = settingsView.getJvmArgsField().getText();
+            String gameArgs = settingsView.getGameArgsField().getText();
+
+            gameLauncher = new GameLauncher(javaPath, maxMemory, jvmArgs, gameArgs);
+            gameLauncher.launch();
+            launchButton.setDisable(true);
+            launchButton.setText("游戏运行中");
+
+            // 启动一个线程来监控游戏进程
+            new Thread(() -> {
+                while (gameLauncher.isRunning()) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        break;
+                    }
+                }
+                javafx.application.Platform.runLater(() -> {
+                    launchButton.setDisable(false);
+                    launchButton.setText("启动游戏");
+                });
+            }).start();
+
+        } catch (NumberFormatException e) {
+            showAlert("内存配置错误", "请输入有效的内存大小");
+        } catch (IOException e) {
+            showAlert("启动失败", "游戏启动失败: " + e.getMessage());
+        } catch (LaunchException e) {
+            showAlert("启动失败", "游戏启动失败: " + e.getMessage());
+        }
+    }
+
+    private void showAlert(String title, String content) {
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle("错误");
+        alert.setHeaderText(title);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 
     private VBox createHeader() {

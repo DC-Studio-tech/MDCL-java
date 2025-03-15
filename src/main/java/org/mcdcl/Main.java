@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
-        primaryStage.setTitle("MDCL - Minecraft启动器");
+        primaryStage.setTitle("MDCL v0.2beta");
         
         MainView mainView = new MainView();
         Scene scene = new Scene(mainView, 1280, 800);

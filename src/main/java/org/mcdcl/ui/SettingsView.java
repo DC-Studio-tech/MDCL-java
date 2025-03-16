@@ -1,12 +1,17 @@
 package org.mcdcl.ui;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
+import org.mcdcl.config.Settings;
+import org.mcdcl.config.SettingsManager;
 import org.mcdcl.util.JavaFinder;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -172,13 +177,31 @@ public class SettingsView extends VBox {
     }
 
     private void saveSettings() {
-        // TODO: 实现设置保存逻辑
         String javaPath = javaPathComboBox.getValue();
         String maxMemory = maxMemoryField.getText();
         String jvmArgs = jvmArgsField.getText();
         String gameArgs = gameArgsField.getText();
         String theme = themeComboBox.getValue();
-        // 在这里添加保存设置的代码
+        
+        // 创建配置对象
+        Settings settings = new Settings();
+        
+        // 设置各项配置值
+        settings.setJavaPath(javaPath);
+        settings.setMaxMemory(Integer.parseInt(maxMemory));
+        settings.setJvmArgs(jvmArgs);
+        settings.setGameArgs(gameArgs);
+        settings.setTheme(theme);
+
+        try {
+            // 保存配置到文件
+            SettingsManager.saveSettings(settings);
+            // 显示保存成功提示
+            showSuccessAlert("设置已保存");
+        } catch (IOException e) {
+            // 显示保存失败错误
+            showErrorAlert("保存设置失败: " + e.getMessage());
+        }
     }
 
     public ComboBox<String> getJavaPathComboBox() {
@@ -220,6 +243,20 @@ public class SettingsView extends VBox {
         button.getStyleClass().add("preset-button");
         gamePresetPane.getChildren().add(button);
     }
-
-
+    
+    private void showSuccessAlert(String message) {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("成功");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+    
+    private void showErrorAlert(String message) {
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle("错误");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
 }

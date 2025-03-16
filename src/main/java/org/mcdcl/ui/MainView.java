@@ -1,18 +1,20 @@
 package org.mcdcl.ui;
 
+import java.io.IOException;
+
+import org.mcdcl.launcher.GameLauncher;
+import org.to2mbn.jmccc.launch.LaunchException;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import org.mcdcl.launcher.GameLauncher;
-import org.to2mbn.jmccc.launch.LaunchException;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import java.io.IOException;
 
 public class MainView extends BorderPane {
     private VBox navigationBar;
@@ -100,12 +102,12 @@ public class MainView extends BorderPane {
 
         // 添加所有分类到导航栏
         navigationBar.getChildren().addAll(
-            createHeader(),
-            accountSection,
-            new Separator(),
-            gameSection,
-            new Separator(),
-            generalSection
+                createHeader(),
+                accountSection,
+                new Separator(),
+                gameSection,
+                new Separator(),
+                generalSection
         );
 
         // 设置默认内容
@@ -128,7 +130,7 @@ public class MainView extends BorderPane {
     public LaunchConfigView getLaunchConfigView() {
         return launchConfigView;
     }
-    
+
     private VBox createSection(String title) {
         VBox section = new VBox(5);
         Label titleLabel = new Label(title);
@@ -171,7 +173,7 @@ public class MainView extends BorderPane {
             String gameArgs = settingsView.getGameArgsField().getText();
 
             gameLauncher = new GameLauncher(javaPath, maxMemory, jvmArgs, gameArgs);
-            gameLauncher.launch();
+            gameLauncher.launchGame("1.19.2"); // 替换为你想启动的Minecraft版本
             launchButton.setDisable(true);
             launchButton.setText("游戏运行中");
 
@@ -218,6 +220,4 @@ public class MainView extends BorderPane {
         header.getChildren().addAll(titleLabel, userInfoLabel);
         return header;
     }
-
-
 }

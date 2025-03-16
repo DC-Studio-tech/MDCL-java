@@ -6,11 +6,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 
 public class AccountSettingsView extends VBox {
-    private Label titleLabel;
-    private Label userStatusLabel;
-    private Button loginButton;
+    private final Label titleLabel;
+    private final Label userStatusLabel;
+    private final Button loginButton;
     private Stage loginStage;
 
     public AccountSettingsView() {
@@ -43,43 +45,12 @@ public class AccountSettingsView extends VBox {
         if (loginStage == null) {
             loginStage = new Stage();
             loginStage.setTitle("登录");
-            
+
             LoginView loginView = new LoginView();
             javafx.scene.Scene scene = new javafx.scene.Scene(loginView);
             scene.getStylesheets().add(getClass().getResource("/styles/main.css").toExternalForm());
-            
+
             loginStage.setScene(scene);
-            
-            // 设置登录按钮事件
-            loginView.getLoginButton().setOnAction(e -> {
-                String username = loginView.getUsernameField().getText();
-                String password = loginView.getPasswordField().getText();
-                
-                if (username.isEmpty() || password.isEmpty()) {
-                    // TODO: 显示错误信息
-                    return;
-                }
-                
-                // TODO: 实现登录验证逻辑
-                userStatusLabel.setText("已登录: " + username);
-                loginStage.close();
-            });
-            
-            // 设置离线模式按钮事件
-            loginView.getOfflineButton().setOnAction(e -> {
-                userStatusLabel.setText("离线模式");
-                loginStage.close();
-            });
         }
-        
-        loginStage.show();
-    }
-
-    public void updateUserStatus(String status) {
-        userStatusLabel.setText(status);
-    }
-
-    public Button getLoginButton() {
-        return loginButton;
     }
 }

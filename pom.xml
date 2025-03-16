@@ -17,28 +17,34 @@
     <dependencies>
             <!-- JMCCC 核心模块 -->
             <dependency>
-                <groupId>org.to2mbn</groupId>
+                <groupId>dev.3-3</groupId>
                 <artifactId>jmccc</artifactId>
-                <version>3.2.2</version>
+                <version>3.1.4</version>
             </dependency>
-            <!-- JMCCC MCDL 模块 -->
+            <!-- JMCCC mcdownloader 模块 -->
             <dependency>
-                <groupId>org.to2mbn</groupId>
-                <artifactId>jmccc-mcdl</artifactId>
-                <version>3.2.2</version>
+                <groupId>dev.3-3</groupId>
+                <artifactId>jmccc-mcdownloader</artifactId>
+                <version>3.1.4</version>
             </dependency>
-            <!-- JMCCC 认证模块 -->
+            <!-- JMCCC 微软认证模块 -->
             <dependency>
-                <groupId>org.to2mbn</groupId>
-                <artifactId>jmccc-auth</artifactId>
-                <version>3.2.2</version>
+                <groupId>dev.3-3</groupId>
+                <artifactId>jmccc-microsoft-authenticator</artifactId>
+                <version>3.1.4</version>
             </dependency>
-            <!-- JMCCC Yggdrasil 模块 -->
+            <!-- JMCCC MojangAPI 模块 -->
             <dependency>
-                <groupId>org.to2mbn</groupId>
-                <artifactId>jmccc-yggdrasil</artifactId>
-                <version>3.2.2</version>
+                <groupId>dev.3-3</groupId>
+                <artifactId>jmccc-mojang-api</artifactId>
+                <version>3.1.4</version>
             </dependency>
+
+        <dependency>
+            <groupId>dev.3-3</groupId>
+            <artifactId>jmccc-cli</artifactId>
+            <version>3.1.4</version>
+        </dependency>
 
         <dependency>
             <groupId>org.openjfx</groupId>
@@ -74,12 +80,5 @@
             </plugin>
         </plugins>
     </build>
-
-    <repositories>
-        <repository>
-            <id>aliyun</id>
-            <url>https://maven.aliyun.com/repository/public</url>
-        </repository>
-    </repositories>
 
 </project>

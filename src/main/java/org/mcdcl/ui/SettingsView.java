@@ -43,6 +43,16 @@ public class SettingsView extends VBox {
         // 标题
         Label titleLabel = new Label("常规设置");
         titleLabel.getStyleClass().add("section-title");
+        
+        // 尝试加载已保存的设置
+        Settings savedSettings = null;
+        try {
+            savedSettings = SettingsManager.loadSettings();
+        } catch (IOException e) {
+            System.err.println("无法加载设置: " + e.getMessage());
+            // 加载失败时使用默认设置
+            savedSettings = new Settings();
+        }
 
         // Java路径设置
         Label javaPathLabel = new Label("Java路径:");
@@ -55,7 +65,15 @@ public class SettingsView extends VBox {
         // 加载系统中已安装的Java版本
         List<String> javaInstallations = JavaFinder.findJavaInstallations();
         javaPathComboBox.getItems().addAll(javaInstallations);
-        if (!javaInstallations.isEmpty()) {
+        
+        // 如果有保存的Java路径，则使用保存的值，否则使用默认值
+        if (savedSettings.getJavaPath() != null && !savedSettings.getJavaPath().isEmpty()) {
+            // 确保保存的Java路径在下拉列表中
+            if (!javaPathComboBox.getItems().contains(savedSettings.getJavaPath())) {
+                javaPathComboBox.getItems().add(savedSettings.getJavaPath());
+            }
+            javaPathComboBox.setValue(savedSettings.getJavaPath());
+        } else if (!javaInstallations.isEmpty()) {
             javaPathComboBox.setValue(javaInstallations.get(0));
         }
 
@@ -85,12 +103,12 @@ public class SettingsView extends VBox {
         // 最大内存设置
         Label maxMemoryLabel = new Label("最大内存:");
         HBox memoryBox = new HBox(10);
-        memorySlider = new Slider(2, 32, 4);
+        memorySlider = new Slider(2, 32, savedSettings.getMaxMemory());
         memorySlider.setShowTickLabels(true);
         memorySlider.setShowTickMarks(true);
         memorySlider.setMajorTickUnit(2);
         memorySlider.setBlockIncrement(1);
-        maxMemoryField = new TextField("4");
+        maxMemoryField = new TextField(String.valueOf(savedSettings.getMaxMemory()));
         maxMemoryField.setPrefWidth(60);
         Label unitLabel = new Label("GB");
         memoryBox.getChildren().addAll(memorySlider, maxMemoryField, unitLabel);
@@ -115,7 +133,7 @@ public class SettingsView extends VBox {
 
         // JVM参数设置
         Label jvmArgsLabel = new Label("JVM参数:");
-        jvmArgsField = new TextField();
+        jvmArgsField = new TextField(savedSettings.getJvmArgs());
         jvmArgsField.setPromptText("-XX:+UseG1GC");
         jvmArgsField.setTooltip(new Tooltip("输入JVM启动参数，多个参数用空格分隔"));
         jvmArgsField.setPrefWidth(300);
@@ -133,7 +151,7 @@ public class SettingsView extends VBox {
 
         // 游戏参数设置
         Label gameArgsLabel = new Label("游戏参数:");
-        gameArgsField = new TextField();
+        gameArgsField = new TextField(savedSettings.getGameArgs());
         gameArgsField.setPromptText("--width 1920 --height 1080");
         gameArgsField.setPrefWidth(300);
 
@@ -151,7 +169,7 @@ public class SettingsView extends VBox {
         Label themeLabel = new Label("主题:");
         themeComboBox = new ComboBox<>();
         themeComboBox.getItems().addAll("默认主题", "暗色主题", "亮色主题");
-        themeComboBox.setValue("默认主题");
+        themeComboBox.setValue(savedSettings.getTheme());
         themeComboBox.setPrefWidth(300);
 
         // 保存按钮

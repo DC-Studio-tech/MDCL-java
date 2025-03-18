@@ -96,11 +96,11 @@
 
 .preset-button {
     -fx-background-color: #E3F2FD;
-    -fx-text-fill: #1976D2;
+    -fx-text-fill: #6d36f7;
     -fx-padding: 8 12;
     -fx-background-radius: 15;
     -fx-border-radius: 15;
-    -fx-border-color: #BBDEFB;
+    -fx-border-color: #bb9fe0;
     -fx-border-width: 1;
     -fx-cursor: hand;
     -fx-transition: all 0.2s ease-in-out;
@@ -114,7 +114,7 @@
 }
 
 .preset-button:pressed {
-    -fx-background-color: #90CAF9;
+    -fx-background-color: #7601fd;
     -fx-scale-x: 0.95;
     -fx-scale-y: 0.95;
 }

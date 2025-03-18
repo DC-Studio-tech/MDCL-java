@@ -69,6 +69,17 @@ public class MainView extends BorderPane {
         versionsButton.setOnAction(event -> {
             contentArea.getChildren().clear();
             VersionView versionView = new VersionView();
+            
+            // 为选择版本按钮添加事件处理器
+            versionView.getSelectButton().setOnAction(e -> {
+                String selectedVersion = versionView.getVersionList().getSelectionModel().getSelectedItem();
+                if (selectedVersion != null && !selectedVersion.isEmpty()) {
+                    launchGame(selectedVersion);
+                } else {
+                    showAlert("未选择版本", "请先从列表中选择一个游戏版本");
+                }
+            });
+            
             contentArea.getChildren().addAll(versionView, backButton);
             backButton.setVisible(true);
         });
@@ -201,6 +212,52 @@ public class MainView extends BorderPane {
         }
     }
 
+    private void launchGame(String versionName) {
+        if (settingsView == null) {
+            showAlert("请先配置启动器设置", "请在常规设置中配置Java路径和启动参数");
+            return;
+        }
+
+        String javaPath = settingsView.getJavaPathComboBox().getValue();
+        if (javaPath == null || javaPath.isEmpty()) {
+            showAlert("Java路径未配置", "请在常规设置中选择或配置Java路径");
+            return;
+        }
+
+        try {
+            int maxMemory = Integer.parseInt(settingsView.getMaxMemoryField().getText());
+            String jvmArgs = settingsView.getJvmArgsField().getText();
+            String gameArgs = settingsView.getGameArgsField().getText();
+
+            gameLauncher = new GameLauncher(javaPath, maxMemory, jvmArgs, gameArgs);
+            gameLauncher.launchGame(versionName);
+            launchButton.setDisable(true);
+            launchButton.setText("游戏运行中");
+
+            // 启动一个线程来监控游戏进程
+            new Thread(() -> {
+                while (gameLauncher.isRunning()) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        break;
+                    }
+                }
+                javafx.application.Platform.runLater(() -> {
+                    launchButton.setDisable(false);
+                    launchButton.setText("启动游戏");
+                });
+            }).start();
+
+        } catch (NumberFormatException e) {
+            showAlert("内存配置错误", "请输入有效的内存大小");
+        } catch (IOException e) {
+            showAlert("启动失败", "游戏启动失败: " + e.getMessage());
+        } catch (LaunchException e) {
+            showAlert("启动失败", "游戏启动失败: " + e.getMessage());
+        }
+    }
+    
     private void showAlert(String title, String content) {
         Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle("错误");

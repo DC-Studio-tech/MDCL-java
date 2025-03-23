@@ -27,35 +27,12 @@ mvn clean package
 
 ### 方法一：使用脚本运行
 
-#### Windows系统
-
-双击运行`run.bat`脚本。
-
-#### macOS/Linux系统
-
-```bash
-chmod +x run.sh  # 赋予执行权限（仅首次运行需要）
-./run.sh
-```
+还没做，自己打包吧
 
 ### 方法二：直接运行JAR文件
 
 ```bash
-java -jar target/MDCL-main-1.0-SNAPSHOT.jar
-```
-
-## 自定义Minecraft目录
-
-默认情况下，启动器使用用户主目录下的`.minecraft`文件夹作为Minecraft目录。如果需要自定义Minecraft目录，可以通过以下方式设置：
-
-### 方法一：修改启动脚本
-
-编辑`run.sh`或`run.bat`脚本，取消注释相关行并设置自定义路径。
-
-### 方法二：设置系统属性
-
-```bash
-java -Dminecraft.directory=/path/to/your/minecraft -jar target/MDCL-main-1.0-SNAPSHOT.jar
+java -jar MDCL-main-1.0-SNAPSHOT.jar
 ```
 
 ## 常见问题

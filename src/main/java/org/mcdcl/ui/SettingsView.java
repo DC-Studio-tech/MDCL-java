@@ -31,6 +31,8 @@ public class SettingsView extends VBox {
     private TextField jvmArgsField;
     private TextField gameArgsField;
     private ComboBox<String> themeComboBox;
+    private TextField minecraftPathField;
+    private Button chooseMinecraftPathButton;
     private Button saveButton;
     private FlowPane jvmPresetPane;
     private FlowPane gamePresetPane;
@@ -171,6 +173,36 @@ public class SettingsView extends VBox {
         themeComboBox.getItems().addAll("默认主题", "暗色主题", "亮色主题");
         themeComboBox.setValue(savedSettings.getTheme());
         themeComboBox.setPrefWidth(300);
+        
+        // Minecraft目录设置
+        Label minecraftPathLabel = new Label("Minecraft目录:");
+        HBox minecraftPathBox = new HBox(10);
+        minecraftPathField = new TextField(savedSettings.getMinecraftPath());
+        minecraftPathField.setPromptText("请选择Minecraft游戏目录");
+        minecraftPathField.setPrefWidth(240);
+        chooseMinecraftPathButton = new Button("选择");
+        
+        // 选择Minecraft目录按钮事件
+        chooseMinecraftPathButton.setOnAction(e -> {
+            javafx.stage.DirectoryChooser directoryChooser = new javafx.stage.DirectoryChooser();
+            directoryChooser.setTitle("选择Minecraft游戏目录");
+            
+            // 如果已有路径，则设置为初始目录
+            String currentPath = minecraftPathField.getText();
+            if (currentPath != null && !currentPath.isEmpty()) {
+                File initialDir = new File(currentPath);
+                if (initialDir.exists() && initialDir.isDirectory()) {
+                    directoryChooser.setInitialDirectory(initialDir);
+                }
+            }
+            
+            File selectedDirectory = directoryChooser.showDialog(getScene().getWindow());
+            if (selectedDirectory != null) {
+                minecraftPathField.setText(selectedDirectory.getAbsolutePath());
+            }
+        });
+        
+        minecraftPathBox.getChildren().addAll(minecraftPathField, chooseMinecraftPathButton);
 
         // 保存按钮
         saveButton = new Button("保存设置");
@@ -187,6 +219,7 @@ public class SettingsView extends VBox {
             gameArgsLabel, gameArgsField,
             gamePresetPane,
             themeLabel, themeComboBox,
+            minecraftPathLabel, minecraftPathBox,
             saveButton
         );
 
@@ -200,6 +233,7 @@ public class SettingsView extends VBox {
         String jvmArgs = jvmArgsField.getText();
         String gameArgs = gameArgsField.getText();
         String theme = themeComboBox.getValue();
+        String minecraftPath = minecraftPathField.getText();
         
         // 创建配置对象
         Settings settings = new Settings();
@@ -210,6 +244,7 @@ public class SettingsView extends VBox {
         settings.setJvmArgs(jvmArgs);
         settings.setGameArgs(gameArgs);
         settings.setTheme(theme);
+        settings.setMinecraftPath(minecraftPath);
 
         try {
             // 保存配置到文件

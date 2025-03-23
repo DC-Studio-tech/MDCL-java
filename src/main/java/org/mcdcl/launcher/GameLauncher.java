@@ -22,20 +22,20 @@ public class GameLauncher {
     private MinecraftDirectory minecraftDir;
 
     // 构造函数
-    public GameLauncher(String javaPath, int maxMemory, String jvmArgs, String gameArgs) {
+    public GameLauncher(String javaPath, int maxMemory, String jvmArgs, String gameArgs, String minecraftPath) {
         this.javaPath = javaPath;
         this.maxMemory = maxMemory;
         this.jvmArgs = jvmArgs;
         this.gameArgs = gameArgs;
         
-        // 使用用户主目录下的.minecraft目录作为默认目录
-        String userHome = System.getProperty("user.home");
-        File minecraftFolder = new File(userHome, ".minecraft");
-        
-        // 如果指定了自定义目录，则使用自定义目录
-        String customPath = System.getProperty("minecraft.directory");
-        if (customPath != null && !customPath.isEmpty()) {
-            minecraftFolder = new File(customPath);
+        // 使用指定的Minecraft目录
+        File minecraftFolder;
+        if (minecraftPath != null && !minecraftPath.isEmpty()) {
+            minecraftFolder = new File(minecraftPath);
+        } else {
+            // 如果没有指定，则使用默认目录
+            String userHome = System.getProperty("user.home");
+            minecraftFolder = new File(userHome, ".minecraft");
         }
         
         this.minecraftDir = new MinecraftDirectory(minecraftFolder);
@@ -44,10 +44,32 @@ public class GameLauncher {
 
     // 启动游戏的方法
     public void launchGame(String versionName) throws LaunchException, IOException {
+        System.out.println("开始启动游戏版本: " + versionName);
+        // 检查Java路径是否有效
+        if (javaPath == null || javaPath.isEmpty()) {
+            throw new LaunchException("Java路径未设置，请在设置中选择有效的Java路径");
+        }
+        
+        File javaFile = new File(javaPath);
+        if (!javaFile.exists() || !javaFile.isFile() || !javaFile.canExecute()) {
+            throw new LaunchException("Java路径无效或不可执行: " + javaPath);
+        }
+        
+        // 检查Minecraft目录是否存在
+        if (!minecraftDir.getRoot().exists() || !minecraftDir.getRoot().isDirectory()) {
+            throw new LaunchException("Minecraft目录不存在或不是有效目录: " + minecraftDir.getRoot().getAbsolutePath());
+        }
+        
+        // 检查版本目录是否存在
+        File versionDir = new File(minecraftDir.getVersions(), versionName);
+        if (!versionDir.exists() || !versionDir.isDirectory()) {
+            throw new LaunchException("找不到版本: " + versionName + "，请确认该版本已安装");
+        }
+        
         // 使用版本名称获取版本对象
         Version version = org.to2mbn.jmccc.version.parsing.Versions.resolveVersion(minecraftDir, versionName);
         if (version == null) {
-            throw new LaunchException("找不到版本: " + versionName);
+            throw new LaunchException("找不到版本: " + versionName + "，版本文件可能已损坏");
         }
         
         // 获取当前选定的账号，如果没有则使用默认值
@@ -80,7 +102,39 @@ public class GameLauncher {
         }
         
         // 启动游戏
-        gameProcess = launcher.launch(option);
+        try {
+            // 启用调试模式，打印启动命令行
+            this.launcher = LauncherBuilder.create().printDebugCommandline(true).build();
+            
+            // 添加进程监听器来捕获游戏输出
+            gameProcess = launcher.launch(option, new org.to2mbn.jmccc.launch.ProcessListener() {
+                @Override
+                public void onLog(String log) {
+                    System.out.println("[Minecraft] " + log);
+                }
+                
+                @Override
+                public void onErrorLog(String log) {
+                    System.err.println("[Minecraft Error] " + log);
+                }
+                
+                @Override
+                public void onExit(int code) {
+                    System.out.println("[Minecraft] 游戏进程已退出，退出码: " + code);
+                }
+            });
+            
+            // 检查进程是否成功启动
+            if (gameProcess == null) {
+                throw new LaunchException("游戏进程启动失败，无法获取进程句柄");
+            }
+            
+            System.out.println("游戏进程已启动，PID: " + gameProcess.pid());
+        } catch (Exception e) {
+            System.err.println("启动游戏时发生异常: " + e.getMessage());
+            e.printStackTrace();
+            throw new LaunchException("启动游戏失败: " + e.getMessage(), e);
+        }
     }
 
     // 关闭游戏进程的方法

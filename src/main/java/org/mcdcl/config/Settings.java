@@ -13,6 +13,7 @@ public class Settings implements Serializable {
     private String jvmArgs;
     private String gameArgs;
     private String theme;
+    private String minecraftPath;
     
     public Settings() {
         // 默认值
@@ -21,6 +22,7 @@ public class Settings implements Serializable {
         this.jvmArgs = "";
         this.gameArgs = "";
         this.theme = "默认主题";
+        this.minecraftPath = System.getProperty("user.home") + "/.minecraft";
     }
     
     public String getJavaPath() {
@@ -61,5 +63,13 @@ public class Settings implements Serializable {
     
     public void setTheme(String theme) {
         this.theme = theme;
+    }
+    
+    public String getMinecraftPath() {
+        return minecraftPath;
+    }
+    
+    public void setMinecraftPath(String minecraftPath) {
+        this.minecraftPath = minecraftPath;
     }
 }

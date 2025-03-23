@@ -30,7 +30,7 @@ public class AboutView extends VBox {
         descriptionLabel.getStyleClass().add("about-text");
 
         // 版权信息
-        Label copyrightLabel = new Label("© 2024 MDCL Team. All rights reserved.");
+        Label copyrightLabel = new Label("© 2025 DCStudio. All rights reserved.");
         copyrightLabel.getStyleClass().add("about-text");
 
         // 添加所有组件到布局

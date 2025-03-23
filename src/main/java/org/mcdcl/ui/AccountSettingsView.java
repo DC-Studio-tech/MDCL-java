@@ -1,24 +1,33 @@
 package org.mcdcl.ui;
 
+import java.util.List;
+
+import org.mcdcl.config.UserPreferences;
+
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.scene.web.WebView;
 
-import org.mcdcl.config.UserPreferences;
-import org.to2mbn.jmccc.auth.OfflineAuthenticator;
+import jmccc.microsoft.MicrosoftAuthenticator;
+import jmccc.microsoft.entity.MicrosoftSession;
+import jmccc.microsoft.entity.MicrosoftVerification;
 
-import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class AccountSettingsView extends VBox {
     private final Label titleLabel;
@@ -59,7 +68,7 @@ public class AccountSettingsView extends VBox {
         }
 
         // 创建登录按钮
-        loginButton = new Button("在线登录");
+        loginButton = new Button("正版登录");
         loginButton.getStyleClass().add("login-button");
         loginButton.setMaxWidth(200);
         
@@ -94,6 +103,12 @@ public class AccountSettingsView extends VBox {
                 } else {
                     showAlert("错误", "请输入用户名");
                 }
+            });
+            
+            // 设置微软登录按钮点击事件
+            loginView.getMicrosoftLoginButton().setOnAction(event -> {
+                loginWithMicrosoft();
+                loginStage.close();
             });
 
             loginStage.setScene(scene);
@@ -270,5 +285,99 @@ public class AccountSettingsView extends VBox {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+    
+    /**
+     * 使用微软账号登录
+     */
+    private void loginWithMicrosoft() {
+        // 创建微软登录验证对话框
+        Stage microsoftLoginStage = new Stage();
+        microsoftLoginStage.setTitle("微软登录");
+        
+        VBox microsoftLoginBox = new VBox(10);
+        microsoftLoginBox.setPadding(new Insets(20));
+        microsoftLoginBox.setAlignment(Pos.CENTER);
+        
+        Label titleLabel = new Label("微软账号登录");
+        titleLabel.setFont(new javafx.scene.text.Font(18));
+        
+        Label instructionLabel = new Label("请等待验证链接生成...");
+        
+        Label verificationUrlLabel = new Label();
+        Label userCodeLabel = new Label();
+        userCodeLabel.setFont(new javafx.scene.text.Font(16));
+        
+        Button openBrowserButton = new Button("打开浏览器");
+        openBrowserButton.setDisable(true);
+        
+        microsoftLoginBox.getChildren().addAll(titleLabel, instructionLabel, verificationUrlLabel, userCodeLabel, openBrowserButton);
+        
+        javafx.scene.Scene scene = new javafx.scene.Scene(microsoftLoginBox, 400, 300);
+        scene.getStylesheets().add(getClass().getResource("/styles/main.css").toExternalForm());
+        
+        microsoftLoginStage.setScene(scene);
+        microsoftLoginStage.show();
+        
+        // 在后台线程中执行微软登录流程
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        CompletableFuture.runAsync(() -> {
+            try {
+                // 设置微软验证的ClientId
+                java.lang.reflect.Field clientIdField = MicrosoftAuthenticator.class.getDeclaredField("clientId");
+                clientIdField.setAccessible(true);
+                clientIdField.set(null, "e1e383f9-59d9-4aa2-bf5e-73fe83b15ba0");
+                
+                // 执行微软登录流程
+                MicrosoftAuthenticator authenticator = MicrosoftAuthenticator.login(verification -> {
+                    // 在JavaFX线程中更新UI
+                    Platform.runLater(() -> {
+                        instructionLabel.setText(verification.message);
+                        verificationUrlLabel.setText("请访问: " + verification.verificationUri);
+                        userCodeLabel.setText("输入代码: " + verification.userCode);
+                        
+                        // 启用打开浏览器按钮
+                        openBrowserButton.setDisable(false);
+                        openBrowserButton.setOnAction(e -> {
+                            try {
+                                java.awt.Desktop.getDesktop().browse(java.net.URI.create(verification.verificationUri));
+                            } catch (Exception ex) {
+                                showAlert("错误", "无法打开浏览器: " + ex.getMessage());
+                            }
+                        });
+                    });
+                });
+                
+                // 获取Minecraft配置文件
+                MicrosoftSession session = authenticator.getSession();
+                String username = authenticator.auth().getUsername();
+                
+                // 保存微软账号信息
+                UserPreferences.saveMicrosoftCredentials(username, session);
+                
+                // 在JavaFX线程中更新UI
+                Platform.runLater(() -> {
+                    // 关闭微软登录对话框
+                    microsoftLoginStage.close();
+                    
+                    // 更新UI
+                    userStatusLabel.setText("当前用户: " + username);
+                    currentUsername = username;
+                    
+                    // 刷新账号列表
+                    refreshAccountList();
+                    
+                    showAlert("成功", "已使用微软账号登录: " + username);
+                });
+            } catch (Exception e) {
+                // 在JavaFX线程中显示错误
+                Platform.runLater(() -> {
+                    microsoftLoginStage.close();
+                    showAlert("错误", "微软登录失败: " + e.getMessage());
+                });
+            } finally {
+                executor.shutdown();
+            }
+        }, executor);
     }
 }

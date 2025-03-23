@@ -16,6 +16,7 @@ public class LoginView extends VBox {
     private PasswordField passwordField;
     private Button loginButton;
     private Button offlineButton;
+    private Button microsoftLoginButton;
 
     public LoginView() {
         setSpacing(20);
@@ -55,8 +56,21 @@ public class LoginView extends VBox {
         
         offlineButton = new Button("离线模式");
         offlineButton.setPrefWidth(100);
+        
+        // 微软登录按钮
+        microsoftLoginButton = new Button("微软登录");
+        microsoftLoginButton.setPrefWidth(100);
+        try {
+            // 可以添加微软图标
+            // ImageView microsoftIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/microsoft_icon.png")));
+            // microsoftIcon.setFitHeight(16);
+            // microsoftIcon.setFitWidth(16);
+            // microsoftLoginButton.setGraphic(microsoftIcon);
+        } catch (Exception e) {
+            System.err.println("无法加载微软图标: " + e.getMessage());
+        }
 
-        buttonBox.getChildren().addAll(loginButton, offlineButton);
+        buttonBox.getChildren().addAll(loginButton, offlineButton, microsoftLoginButton);
 
         // 添加所有组件到主布局
         getChildren().addAll(titleLabel, formGrid, buttonBox);
@@ -76,5 +90,9 @@ public class LoginView extends VBox {
 
     public Button getOfflineButton() {
         return offlineButton;
+    }
+    
+    public Button getMicrosoftLoginButton() {
+        return microsoftLoginButton;
     }
 }

@@ -32,7 +32,7 @@ public class MainView extends BorderPane {
     public MainView() {
         // 初始化组件
         launchConfigView = new LaunchConfigView();
-        userInfoLabel = new Label("未登录");
+        userInfoLabel = new Label("V0.3Beta");
         contentArea = new StackPane();
 
         // 初始化导航栏
@@ -167,9 +167,9 @@ public class MainView extends BorderPane {
     }
 
     private void launchGame() {
+        // 如果settingsView为null，先尝试加载设置
         if (settingsView == null) {
-            showAlert("请先配置启动器设置", "请在常规设置中配置Java路径和启动参数");
-            return;
+            settingsView = new SettingsView();
         }
 
         String javaPath = settingsView.getJavaPathComboBox().getValue();
@@ -179,17 +179,62 @@ public class MainView extends BorderPane {
         }
 
         try {
-            int maxMemory = Integer.parseInt(settingsView.getMaxMemoryField().getText());
+            // 从GB转换为MB，SettingsView中的内存值是以GB为单位的
+            int maxMemoryGB = Integer.parseInt(settingsView.getMaxMemoryField().getText());
+            int maxMemory = maxMemoryGB * 1024; // 转换为MB
             String jvmArgs = settingsView.getJvmArgsField().getText();
             String gameArgs = settingsView.getGameArgsField().getText();
+            
+            // 从设置中获取Minecraft目录路径
+            String minecraftPath = "";
+            try {
+                minecraftPath = org.mcdcl.config.SettingsManager.loadSettings().getMinecraftPath();
+            } catch (IOException e) {
+                // 如果加载失败，使用默认路径
+                minecraftPath = System.getProperty("user.home") + "/.minecraft";
+            }
 
-            gameLauncher = new GameLauncher(javaPath, maxMemory, jvmArgs, gameArgs);
-            gameLauncher.launchGame("1.19.2"); // 替换为你想启动的Minecraft版本
+            // 获取可用的Minecraft版本
+            java.util.List<String> availableVersions;
+            try {
+                availableVersions = org.mcdcl.version.VersionManager.getAvailableVersions();
+                if (availableVersions.isEmpty()) {
+                    showAlert("未找到游戏版本", "在Minecraft目录中未找到任何可用的游戏版本，请检查目录设置");
+                    return;
+                }
+            } catch (IOException e) {
+                showAlert("版本加载失败", "无法加载游戏版本列表: " + e.getMessage());
+                return;
+            }
+            
+            // 默认尝试启动1.19.2版本，如果不存在则使用第一个可用版本
+            String versionToLaunch = "1.19.2";
+            if (!availableVersions.contains(versionToLaunch)) {
+                versionToLaunch = availableVersions.get(0);
+            }
+
+            gameLauncher = new GameLauncher(javaPath, maxMemory, jvmArgs, gameArgs, minecraftPath);
+            gameLauncher.launchGame(versionToLaunch);
             launchButton.setDisable(true);
             launchButton.setText("游戏运行中");
 
             // 启动一个线程来监控游戏进程
             new Thread(() -> {
+                System.out.println("开始监控游戏进程...");
+                boolean wasRunning = false;
+                
+                // 检查进程是否成功启动
+                if (gameLauncher.isRunning()) {
+                    wasRunning = true;
+                    System.out.println("游戏进程已成功启动");
+                } else {
+                    System.out.println("警告：游戏进程可能未成功启动");
+                    javafx.application.Platform.runLater(() -> {
+                        showAlert("启动异常", "游戏进程可能未成功启动，请检查Java路径和Minecraft目录设置");
+                    });
+                }
+                
+                // 监控进程运行状态
                 while (gameLauncher.isRunning()) {
                     try {
                         Thread.sleep(1000);
@@ -197,6 +242,15 @@ public class MainView extends BorderPane {
                         break;
                     }
                 }
+                
+                // 进程已结束
+                System.out.println("游戏进程已结束");
+                if (wasRunning) {
+                    System.out.println("游戏正常退出");
+                } else {
+                    System.out.println("警告：游戏可能异常退出或未成功启动");
+                }
+                
                 javafx.application.Platform.runLater(() -> {
                     launchButton.setDisable(false);
                     launchButton.setText("启动游戏");
@@ -213,9 +267,9 @@ public class MainView extends BorderPane {
     }
 
     private void launchGame(String versionName) {
+        // 如果settingsView为null，先尝试加载设置
         if (settingsView == null) {
-            showAlert("请先配置启动器设置", "请在常规设置中配置Java路径和启动参数");
-            return;
+            settingsView = new SettingsView();
         }
 
         String javaPath = settingsView.getJavaPathComboBox().getValue();
@@ -225,17 +279,43 @@ public class MainView extends BorderPane {
         }
 
         try {
-            int maxMemory = Integer.parseInt(settingsView.getMaxMemoryField().getText());
+            // 从GB转换为MB，SettingsView中的内存值是以GB为单位的
+            int maxMemoryGB = Integer.parseInt(settingsView.getMaxMemoryField().getText());
+            int maxMemory = maxMemoryGB * 1024; // 转换为MB
             String jvmArgs = settingsView.getJvmArgsField().getText();
             String gameArgs = settingsView.getGameArgsField().getText();
+            
+            // 从设置中获取Minecraft目录路径
+            String minecraftPath = "";
+            try {
+                minecraftPath = org.mcdcl.config.SettingsManager.loadSettings().getMinecraftPath();
+            } catch (IOException e) {
+                // 如果加载失败，使用默认路径
+                minecraftPath = System.getProperty("user.home") + "/.minecraft";
+            }
 
-            gameLauncher = new GameLauncher(javaPath, maxMemory, jvmArgs, gameArgs);
+            gameLauncher = new GameLauncher(javaPath, maxMemory, jvmArgs, gameArgs, minecraftPath);
             gameLauncher.launchGame(versionName);
             launchButton.setDisable(true);
             launchButton.setText("游戏运行中");
 
             // 启动一个线程来监控游戏进程
             new Thread(() -> {
+                System.out.println("开始监控游戏进程...");
+                boolean wasRunning = false;
+                
+                // 检查进程是否成功启动
+                if (gameLauncher.isRunning()) {
+                    wasRunning = true;
+                    System.out.println("游戏进程已成功启动");
+                } else {
+                    System.out.println("警告：游戏进程可能未成功启动");
+                    javafx.application.Platform.runLater(() -> {
+                        showAlert("启动异常", "游戏进程可能未成功启动，请检查Java路径和Minecraft目录设置");
+                    });
+                }
+                
+                // 监控进程运行状态
                 while (gameLauncher.isRunning()) {
                     try {
                         Thread.sleep(1000);
@@ -243,6 +323,15 @@ public class MainView extends BorderPane {
                         break;
                     }
                 }
+                
+                // 进程已结束
+                System.out.println("游戏进程已结束");
+                if (wasRunning) {
+                    System.out.println("游戏正常退出");
+                } else {
+                    System.out.println("警告：游戏可能异常退出或未成功启动");
+                }
+                
                 javafx.application.Platform.runLater(() -> {
                     launchButton.setDisable(false);
                     launchButton.setText("启动游戏");

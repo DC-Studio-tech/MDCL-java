@@ -1,0 +1,8 @@
+{
+  "javaPath": "/Library/Java/JavaVirtualMachines/jdk-21.jdk/Contents/Home/bin/java",
+  "maxMemory": 2,
+  "jvmArgs": "",
+  "gameArgs": "",
+  "theme": "自定义主题",
+  "backgroundImage": "/Users/zhuangweiwei/Desktop/1.jpg"
+}

@@ -4,9 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import org.mcdcl.config.Settings;
-import org.mcdcl.config.SettingsManager;
 import org.mcdcl.util.JavaFinder;
+import org.mcdcl.util.Settings;
+import org.mcdcl.util.SettingsManager;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -36,6 +36,7 @@ public class SettingsView extends VBox {
     private Button saveButton;
     private FlowPane jvmPresetPane;
     private FlowPane gamePresetPane;
+    private TextField backgroundPathField;  // 添加背景图片路径字段
 
     public SettingsView() {
         setSpacing(15);
@@ -170,10 +171,33 @@ public class SettingsView extends VBox {
         // 主题设置
         Label themeLabel = new Label("主题:");
         themeComboBox = new ComboBox<>();
-        themeComboBox.getItems().addAll("默认主题", "暗色主题", "亮色主题");
+        themeComboBox.getItems().addAll("默认主题", "深色主题", "浅色主题", "自定义主题");
         themeComboBox.setValue(savedSettings.getTheme());
         themeComboBox.setPrefWidth(300);
         
+        // 添加背景图片设置
+        Label backgroundLabel = new Label("背景图片:");
+        HBox backgroundBox = new HBox(10);
+        backgroundPathField = new TextField(savedSettings.getBackgroundImage());
+        backgroundPathField.setPromptText("选择背景图片路径");
+        backgroundPathField.setPrefWidth(240);
+        Button selectBackgroundButton = new Button("选择");
+        
+        selectBackgroundButton.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("选择背景图片");
+            fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("图片文件", "*.jpg", "*.png")
+            );
+            File file = fileChooser.showOpenDialog(getScene().getWindow());
+            if (file != null) {
+                backgroundPathField.setText(file.getAbsolutePath());
+                updateBackground(file.getAbsolutePath());
+            }
+        });
+        
+        backgroundBox.getChildren().addAll(backgroundPathField, selectBackgroundButton);
+
         // Minecraft目录设置
         Label minecraftPathLabel = new Label("Minecraft目录:");
         HBox minecraftPathBox = new HBox(10);
@@ -219,6 +243,7 @@ public class SettingsView extends VBox {
             gameArgsLabel, gameArgsField,
             gamePresetPane,
             themeLabel, themeComboBox,
+            backgroundLabel, backgroundBox,  // 添加背景设置
             minecraftPathLabel, minecraftPathBox,
             saveButton
         );
@@ -234,6 +259,7 @@ public class SettingsView extends VBox {
         String gameArgs = gameArgsField.getText();
         String theme = themeComboBox.getValue();
         String minecraftPath = minecraftPathField.getText();
+        String backgroundImage = backgroundPathField.getText();  // 获取背景图片路径
         
         // 创建配置对象
         Settings settings = new Settings();
@@ -245,14 +271,13 @@ public class SettingsView extends VBox {
         settings.setGameArgs(gameArgs);
         settings.setTheme(theme);
         settings.setMinecraftPath(minecraftPath);
+        settings.setBackgroundImage(backgroundImage);  // 设置背景图片路径
 
         try {
-            // 保存配置到文件
             SettingsManager.saveSettings(settings);
-            // 显示保存成功提示
+            updateThemeAndBackground();  // 保存后更新主题和背景
             showSuccessAlert("设置已保存");
         } catch (IOException e) {
-            // 显示保存失败错误
             showErrorAlert("保存设置失败: " + e.getMessage());
         }
     }
@@ -311,5 +336,93 @@ public class SettingsView extends VBox {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    // 将类外的代码移动到类内部
+    private void initializeUI() {
+        // 添加主题选择
+        Label themeLabel = new Label("主题设置");
+        ComboBox<String> themeComboBox = new ComboBox<>();
+        themeComboBox.getItems().addAll("深色主题", "浅色主题", "自定义主题");
+        themeComboBox.setValue("深色主题");
+        
+        // 添加背景图片选择
+        Label backgroundLabel = new Label("背景图片");
+        HBox backgroundBox = new HBox(10);
+        TextField backgroundPathField = new TextField();
+        Button selectBackgroundButton = new Button("选择图片");
+        
+        selectBackgroundButton.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("图片文件", "*.jpg", "*.png")
+            );
+            File file = fileChooser.showOpenDialog(getScene().getWindow());
+            if (file != null) {
+                backgroundPathField.setText(file.getAbsolutePath());
+                updateBackground(file.getAbsolutePath());
+            }
+        });
+        
+        backgroundBox.getChildren().addAll(backgroundPathField, selectBackgroundButton);
+
+        // 保存设置
+        Button saveButton = new Button("保存设置");
+        saveButton.setOnAction(e -> {
+            try {
+                Settings settings = SettingsManager.loadSettings();
+                settings.setBackgroundImage(backgroundPathField.getText());
+                settings.setTheme(themeComboBox.getValue().equals("深色主题") ? "dark" : 
+                                themeComboBox.getValue().equals("浅色主题") ? "light" : "custom");
+                SettingsManager.saveSettings(settings);
+                updateThemeAndBackground();
+            } catch (IOException ex) {
+                showErrorAlert("保存设置失败: " + ex.getMessage());
+            }
+        });
+
+        // 添加到布局
+        getChildren().addAll(
+            themeLabel,
+            themeComboBox,
+            backgroundLabel,
+            backgroundBox,
+            saveButton
+        );
+    }
+
+    private void updateThemeAndBackground() {
+        try {
+            Settings settings = SettingsManager.loadSettings();
+            // 更新主题
+            String theme = settings.getTheme();
+            if (theme != null) {
+                getScene().getRoot().getStyleClass().removeAll("theme-light", "theme-dark", "theme-custom");
+                switch (theme) {
+                    case "浅色主题" -> getScene().getRoot().getStyleClass().add("theme-light");
+                    case "深色主题" -> getScene().getRoot().getStyleClass().add("theme-dark");
+                    case "自定义主题" -> getScene().getRoot().getStyleClass().add("theme-custom");
+                }
+            }
+            
+            // 更新背景图片
+            String backgroundImage = settings.getBackgroundImage();
+            if (backgroundImage != null && !backgroundImage.isEmpty()) {
+                updateBackground(backgroundImage);
+            }
+        } catch (IOException e) {
+            showErrorAlert("无法加载设置: " + e.getMessage());
+        }
+    }
+
+    private void updateBackground(String path) {
+        if (path != null && !path.isEmpty()) {
+            String styleString = String.format("-fx-background-image: url('file:%s'); " +
+                                             "-fx-background-size: cover; " +
+                                             "-fx-background-position: center;", path);
+            setStyle(styleString);
+        } else {
+            setStyle("");
+        }
     }
 }

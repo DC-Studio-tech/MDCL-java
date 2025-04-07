@@ -2,18 +2,27 @@ package org.mcdcl.ui;
 
 import java.io.IOException;
 
+import org.kordamp.ikonli.javafx.FontIcon;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignA;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignC;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignI;
 import org.mcdcl.launcher.GameLauncher;
 import org.to2mbn.jmccc.launch.LaunchException;
 
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+import org.mcdcl.util.Settings;
+import org.mcdcl.util.SettingsManager;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.BorderPane;  // 添加这个导入
+import javafx.scene.layout.StackPane;  // 修改图标包导入
 import javafx.scene.layout.VBox;
 
 public class MainView extends BorderPane {
@@ -41,8 +50,9 @@ public class MainView extends BorderPane {
         navigationBar.setPrefWidth(250);
         navigationBar.getStyleClass().add("navigation-bar");
 
-        // 设置内容区域的边距
+        // 设置内容区域的边距和背景
         contentArea.setPadding(new Insets(20));
+        contentArea.setStyle("-fx-background-color: rgba(46, 52, 64, 0.7);"); // 添加半透明背景
 
         // 创建返回按钮
         backButton = new Button("返回");
@@ -87,6 +97,9 @@ public class MainView extends BorderPane {
 
         // 创建启动游戏按钮
         launchButton = new Button("启动游戏");
+        FontAwesomeIconView playIcon = new FontAwesomeIconView(FontAwesomeIcon.PLAY);
+        playIcon.setSize("18");
+        launchButton.setGraphic(playIcon);
         launchButton.getStyleClass().addAll("launch-button", "nav-button");
         launchButton.setOnAction(event -> launchGame());
         StackPane.setAlignment(launchButton, Pos.BOTTOM_RIGHT);
@@ -154,9 +167,33 @@ public class MainView extends BorderPane {
         Button button = new Button(text);
         button.getStyleClass().add("nav-button");
         button.setMaxWidth(Double.MAX_VALUE);
+        
+        // 根据不同按钮添加不同图标
+        FontIcon icon = null;
+        switch (text) {
+            case "账户设置":  // 修改为实际按钮文本
+                icon = new FontIcon(MaterialDesignA.ACCOUNT);
+                break;
+            case "版本列表":  // 修改为实际按钮文本
+                icon = new FontIcon(MaterialDesignA.ARCHIVE);
+                break;
+            case "常规设置":
+                icon = new FontIcon(MaterialDesignC.COG);
+                break;
+            case "关于":
+                icon = new FontIcon(MaterialDesignI.INFORMATION);
+                break;
+        }
+        
+        if (icon != null) {
+            icon.setIconSize(18);
+            button.setGraphic(icon);
+            button.setContentDisplay(ContentDisplay.LEFT);
+        }
+        
         return button;
     }
-
+    
     private void showWelcomeView() {
         contentArea.getChildren().clear();
         VBox welcomeContent = new VBox(10);
@@ -197,7 +234,11 @@ public class MainView extends BorderPane {
             // 获取可用的Minecraft版本
             java.util.List<String> availableVersions;
             try {
-                availableVersions = org.mcdcl.version.VersionManager.getAvailableVersions();
+                try {
+                    availableVersions = org.mcdcl.version.VersionManager.getAvailableVersions();
+                } catch (org.mcdcl.exception.MinecraftDirectoryException e) {
+                    throw new IOException("无法读取Minecraft目录: " + e.getMessage());
+                }
                 if (availableVersions.isEmpty()) {
                     showAlert("未找到游戏版本", "在Minecraft目录中未找到任何可用的游戏版本，请检查目录设置");
                     return;
@@ -365,5 +406,31 @@ public class MainView extends BorderPane {
 
         header.getChildren().addAll(titleLabel, userInfoLabel);
         return header;
+    }
+
+    public void updateBackground(String path) {
+        if (path != null && !path.isEmpty()) {
+            setStyle("-fx-background-image: url('file:" + path.replace("\\", "/") + "'); " +
+                    "-fx-background-size: cover; " +
+                    "-fx-background-position: center center;");
+        }
+    }
+
+    private void loadSettings() {
+        try {
+            Settings settings = SettingsManager.loadSettings();
+            String backgroundImage = settings.getBackgroundImage();
+            if (backgroundImage != null && !backgroundImage.isEmpty()) {
+                updateBackground(backgroundImage);
+            }
+            
+            // 应用主题
+            String theme = settings.getTheme();
+            getStyleClass().remove("theme-light");
+            getStyleClass().remove("theme-dark");
+            getStyleClass().add("theme-" + theme);
+        } catch (IOException e) {
+            // 使用默认设置
+        }
     }
 }

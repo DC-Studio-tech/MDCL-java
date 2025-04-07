@@ -7,11 +7,39 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.openjfx</groupId>
-        <artifactId>javafx-maven-plugin</artifactId>
-        <version>0.0.8</version>
+        <groupId>org.panteleyev</groupId>
+        <artifactId>jpackage-maven-plugin</artifactId>
+        <version>1.6.0</version>
         <configuration>
+          <name>MDCL</name>
+          <appVersion>1.0.1</appVersion>
+          <vendor>MDCL</vendor>
+          <destination>target/dist</destination>
           <mainClass>org.mcdcl.Main</mainClass>
+          <mainJar>MDCL-${project.version}.jar</mainJar>
+          <input>target</input>
+          <type>DMG</type>
+          <icon>src/main/resources/images/icon.icns</icon>
+          <macPackageIdentifier>com.dcstudio.mdcl</macPackageIdentifier>
+          <javaOptions>
+            <option>-Dfile.encoding=UTF-8</option>
+          </javaOptions>
+          <addModules>
+            <module>javafx.controls</module>
+            <module>javafx.fxml</module>
+            <module>javafx.web</module>
+            <module>javafx.swing</module>
+            <module>javafx.media</module>
+          </addModules>
+          <modulePaths>
+            <modulePath>/Users/zhuangweiwei/.m2/repository/org/openjfx/javafx-controls/21/javafx-controls-21-mac-aarch64.jar</modulePath>
+            <modulePath>/Users/zhuangweiwei/.m2/repository/org/openjfx/javafx-fxml/21/javafx-fxml-21-mac-aarch64.jar</modulePath>
+            <modulePath>/Users/zhuangweiwei/.m2/repository/org/openjfx/javafx-web/21/javafx-web-21-mac-aarch64.jar</modulePath>
+            <modulePath>/Users/zhuangweiwei/.m2/repository/org/openjfx/javafx-swing/21/javafx-swing-21-mac-aarch64.jar</modulePath>
+            <modulePath>/Users/zhuangweiwei/.m2/repository/org/openjfx/javafx-graphics/21/javafx-graphics-21-mac-aarch64.jar</modulePath>
+            <modulePath>/Users/zhuangweiwei/.m2/repository/org/openjfx/javafx-base/21/javafx-base-21-mac-aarch64.jar</modulePath>
+            <modulePath>/Users/zhuangweiwei/.m2/repository/org/openjfx/javafx-media/21/javafx-media-21-mac-aarch64.jar</modulePath>
+          </modulePaths>
         </configuration>
       </plugin>
       <plugin>
@@ -36,18 +64,8 @@
                 <transformer>
                   <mainClass>org.mcdcl.Main</mainClass>
                 </transformer>
-                <transformer />
               </transformers>
-              <filters>
-                <filter>
-                  <artifact>*:*</artifact>
-                  <excludes>
-                    <exclude>META-INF/*.SF</exclude>
-                    <exclude>META-INF/*.DSA</exclude>
-                    <exclude>META-INF/*.RSA</exclude>
-                  </excludes>
-                </filter>
-              </filters>
+              <outputFile>${project.build.directory}/MDCL-${project.version}.jar</outputFile>
             </configuration>
           </execution>
         </executions>

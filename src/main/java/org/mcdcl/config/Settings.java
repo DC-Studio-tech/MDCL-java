@@ -12,7 +12,8 @@ public class Settings implements Serializable {
     private int maxMemory;
     private String jvmArgs;
     private String gameArgs;
-    private String theme;
+    private String backgroundImage;
+    private String theme; // light, dark, custom
     private String minecraftPath;
     
     public Settings() {
@@ -57,8 +58,16 @@ public class Settings implements Serializable {
         this.gameArgs = gameArgs;
     }
     
+    public String getBackgroundImage() {
+        return backgroundImage;
+    }
+    
+    public void setBackgroundImage(String backgroundImage) {
+        this.backgroundImage = backgroundImage;
+    }
+    
     public String getTheme() {
-        return theme;
+        return theme != null ? theme : "dark";
     }
     
     public void setTheme(String theme) {

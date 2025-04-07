@@ -128,6 +128,11 @@
 
 /* 主界面样式 */
 .main-view {
+    -fx-background-image: url('../images/background.jpg');
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+}
     -fx-background-color: linear-gradient(to bottom right, #7D00FF, #2E3440);
     -fx-padding: 0;
 }
@@ -263,3 +268,43 @@
     -fx-border-color: #00FFA3;
     -fx-effect: dropshadow(three-pass-box, rgba(0,255,163,0.4), 5, 0, 0, 0);
 }
+
+.button {
+    -fx-padding: 8 12 8 12;
+}
+
+.button .ikonli-font-icon {
+    -fx-icon-color: -fx-text-fill;
+}
+
+.button:hover .ikonli-font-icon {
+    -fx-icon-color: white;
+}
+
+.nav-button {
+    -fx-padding: 8 16 8 16;
+}
+
+.nav-button .ikonli-font-icon,
+.nav-button .fontawesome-icon {
+    -fx-fill: -fx-text-fill;
+    -fx-padding: 0 8 0 0;
+}
+
+/* 深色主题 */
+.theme-dark {
+    -fx-base: #2E3440;
+    -fx-background: #2E3440;
+    -fx-control-inner-background: #3B4252;
+    -fx-text-fill: white;
+}
+
+/* 浅色主题 */
+.theme-light {
+    -fx-base: #ECEFF4;
+    -fx-background: #ECEFF4;
+    -fx-control-inner-background: #E5E9F0;
+    -fx-text-fill: #2E3440;
+}
+
+/* 其他样式保持不变 ... */

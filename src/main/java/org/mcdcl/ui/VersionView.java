@@ -8,6 +8,7 @@ import org.mcdcl.config.Settings;
 import org.mcdcl.config.SettingsManager;
 import org.mcdcl.version.VersionManager;
 import org.mcdcl.version.VersionDownloader;
+import org.mcdcl.exception.MinecraftDirectoryException;
 import org.to2mbn.jmccc.mcdownloader.RemoteVersionList;
 
 import javafx.geometry.Insets;
@@ -21,6 +22,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+import org.kordamp.ikonli.javafx.FontIcon;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignR;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignD;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignF;
 
 public class VersionView extends VBox {
     private ListView<String> versionList;
@@ -66,7 +74,24 @@ public class VersionView extends VBox {
         javafx.scene.layout.HBox otherButtonsBox = new javafx.scene.layout.HBox(10);
         otherButtonsBox.setAlignment(Pos.CENTER);
         
+        // 修改刷新按钮
         refreshButton = new Button("刷新版本列表");
+        FontIcon refreshIcon = new FontIcon(MaterialDesignR.REFRESH);
+        refreshIcon.setIconSize(16);
+        refreshButton.setGraphic(refreshIcon);
+        
+        // 修改下载按钮
+        downloadButton = new Button("下载新版本");
+        FontIcon downloadIcon = new FontIcon(MaterialDesignD.DOWNLOAD);
+        downloadIcon.setIconSize(16);
+        downloadButton.setGraphic(downloadIcon);
+        
+        // 修改选择按钮
+        selectButton = new Button("选择版本");
+        FontIcon selectIcon = new FontIcon(MaterialDesignF.FOLDER_OPEN);
+        selectIcon.setIconSize(16);
+        selectButton.setGraphic(selectIcon);
+        
         refreshButton.setPrefWidth(150);
         
         downloadButton = new Button("下载新版本");
@@ -250,14 +275,8 @@ public class VersionView extends VBox {
             // 获取当前设置的Minecraft路径
             String minecraftPath = minecraftPathField.getText();
             if (minecraftPath == null || minecraftPath.isEmpty()) {
-                // 如果路径为空，尝试从设置中加载
-                try {
-                    Settings settings = SettingsManager.loadSettings();
-                    minecraftPath = settings.getMinecraftPath();
-                } catch (IOException ex) {
-                    // 如果加载失败，使用默认路径
-                    minecraftPath = System.getProperty("user.home") + "/.minecraft";
-                }
+                Settings settings = SettingsManager.loadSettings();
+                minecraftPath = settings.getMinecraftPath();
                 // 更新路径字段
                 minecraftPathField.setText(minecraftPath);
             }
@@ -282,7 +301,7 @@ public class VersionView extends VBox {
                     versionList.getSelectionModel().select(0);
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | MinecraftDirectoryException e) {
             showErrorAlert("加载版本列表失败: " + e.getMessage());
         }
     }

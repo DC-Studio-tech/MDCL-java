@@ -1,8 +1,6 @@
 package org.mcdcl;
 
 import java.io.InputStream;
-import java.awt.Toolkit;
-import javax.swing.ImageIcon;
 import java.lang.reflect.Method;
 
 import org.mcdcl.ui.MainView;
@@ -16,7 +14,7 @@ import javafx.stage.Stage;
 public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
-        primaryStage.setTitle("MDCL v0.2beta");
+        primaryStage.setTitle("MDCL v1.0.1");
 
         // 设置任务栏图标
         try {

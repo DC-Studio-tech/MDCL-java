@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
-        primaryStage.setTitle("MDCL v1.0.1");
+        primaryStage.setTitle("MDCL - v1.0.1");
 
         // 设置任务栏图标
         try {

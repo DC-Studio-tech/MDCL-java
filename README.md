@@ -27,7 +27,13 @@ mvn clean package
 
 ### 方法一：使用脚本运行
 
-还没做，自己打包吧
+新建 run.bat 文件，内容如下：
+
+```
+@echo off
+java -jar target/MDCL-1.0-SNAPSHOT.jar
+pause
+```
 
 ### 方法二：直接运行JAR文件
 

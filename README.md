@@ -59,6 +59,9 @@ java -jar MDCL-main-1.0-SNAPSHOT.jar
 java -Xmx2G -jar target/MDCL-main-1.0-SNAPSHOT.jar
 ```
 
+## 待办事项
+1.翻译出English版本并添加切换语言选项
+
 ## 许可证
 
 本项目基于MIT许可证开源。

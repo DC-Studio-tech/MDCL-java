@@ -24,8 +24,11 @@ import javafx.scene.control.Separator;
 import javafx.scene.layout.BorderPane;  // 添加这个导入
 import javafx.scene.layout.StackPane;  // 修改图标包导入
 import javafx.scene.layout.VBox;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 
 public class MainView extends BorderPane {
+    private TabPane tabPane;
     private VBox navigationBar;
     private StackPane contentArea;
     private LaunchConfigView launchConfigView;
@@ -39,6 +42,9 @@ public class MainView extends BorderPane {
     private GameLauncher gameLauncher;
 
     public MainView() {
+        // 在构造函数开始处初始化 TabPane
+        tabPane = new TabPane();
+        
         // 初始化组件
         launchConfigView = new LaunchConfigView();
         userInfoLabel = new Label("V0.3Beta");
@@ -94,6 +100,16 @@ public class MainView extends BorderPane {
             backButton.setVisible(true);
         });
         gameSection.getChildren().add(versionsButton);
+        
+        // 添加趣味功能按钮
+        Button funFeaturesButton = createNavButton("趣味功能");
+        funFeaturesButton.setOnAction(event -> {
+            contentArea.getChildren().clear();
+            MoreFeaturesView moreFeaturesView = new MoreFeaturesView();
+            contentArea.getChildren().addAll(moreFeaturesView, backButton);
+            backButton.setVisible(true);
+        });
+        gameSection.getChildren().add(funFeaturesButton);
 
         // 创建启动游戏按钮
         launchButton = new Button("启动游戏");
@@ -181,6 +197,9 @@ public class MainView extends BorderPane {
                 icon = new FontIcon(MaterialDesignC.COG);
                 break;
             case "关于":
+                icon = new FontIcon(MaterialDesignI.INFORMATION);
+                break;
+            case "趣味功能":
                 icon = new FontIcon(MaterialDesignI.INFORMATION);
                 break;
         }
@@ -433,4 +452,104 @@ public class MainView extends BorderPane {
             // 使用默认设置
         }
     }
+    
+    private void initializeTabs() {
+            // 添加趣味功能标签页
+            Tab moreFeaturesTab = new Tab("趣味功能");
+            moreFeaturesTab.setContent(new MoreFeaturesView());
+            moreFeaturesTab.setClosable(false);
+            tabPane.getTabs().add(moreFeaturesTab);
+            
+            // ... 现有代码 ...
+        }
+
+    private VBox createSidebar() {
+            VBox sidebar = new VBox(10);
+            sidebar.setPadding(new Insets(20));
+            sidebar.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
+            sidebar.setPrefWidth(200);
+    
+            // 账户部分
+            Label accountLabel = new Label("账户");
+            accountLabel.getStyleClass().add("sidebar-section");
+    
+            Button accountSettingsBtn = new Button("账户设置");
+            accountSettingsBtn.getStyleClass().add("sidebar-button");
+            accountSettingsBtn.setOnAction(e -> {
+                contentArea.getChildren().clear();
+                AccountSettingsView accountSettingsView = new AccountSettingsView();
+                contentArea.getChildren().addAll(accountSettingsView, backButton);
+                backButton.setVisible(true);
+            });
+    
+            // 游戏部分
+            Label gameLabel = new Label("游戏");
+            gameLabel.getStyleClass().add("sidebar-section");
+    
+            Button versionsBtn = new Button("版本列表");
+            versionsBtn.getStyleClass().add("sidebar-button");
+            versionsBtn.setOnAction(e -> {
+                contentArea.getChildren().clear();
+                VersionView versionView = new VersionView();
+                
+                // 为选择版本按钮添加事件处理器
+                versionView.getSelectButton().setOnAction(event -> {
+                    String selectedVersion = versionView.getVersionList().getSelectionModel().getSelectedItem();
+                    if (selectedVersion != null && !selectedVersion.isEmpty()) {
+                        launchGame(selectedVersion);
+                    } else {
+                        showAlert("未选择版本", "请先从列表中选择一个游戏版本");
+                    }
+                });
+                
+                contentArea.getChildren().addAll(versionView, backButton);
+                backButton.setVisible(true);
+            });
+    
+            // 趣味功能部分
+            Label funLabel = new Label("趣味功能");
+            funLabel.getStyleClass().add("sidebar-section");
+    
+            Button funFeaturesBtn = new Button("趣味功能");
+            funFeaturesBtn.getStyleClass().add("sidebar-button");
+            funFeaturesBtn.setOnAction(e -> showFunFeatures());
+    
+            // 通用部分
+            Label generalLabel = new Label("通用");
+            generalLabel.getStyleClass().add("sidebar-section");
+    
+            Button settingsBtn = new Button("常规设置");
+            settingsBtn.getStyleClass().add("sidebar-button");
+            settingsBtn.setOnAction(e -> {
+                contentArea.getChildren().clear();
+                settingsView = new SettingsView();
+                contentArea.getChildren().addAll(settingsView, backButton);
+                backButton.setVisible(true);
+            });
+    
+            Button aboutBtn = new Button("关于");
+            aboutBtn.getStyleClass().add("sidebar-button");
+            aboutBtn.setOnAction(e -> {
+                contentArea.getChildren().clear();
+                AboutView aboutView = new AboutView();
+                contentArea.getChildren().addAll(aboutView, backButton);
+                backButton.setVisible(true);
+            });
+    
+            sidebar.getChildren().addAll(
+                accountLabel, accountSettingsBtn,
+                gameLabel, versionsBtn,
+                funLabel, funFeaturesBtn,
+                generalLabel, settingsBtn, aboutBtn
+            );
+    
+            return sidebar;
+        }
+    
+        private void showFunFeatures() {
+            contentArea.getChildren().clear();
+            MoreFeaturesView moreFeaturesView = new MoreFeaturesView();
+            contentArea.getChildren().addAll(moreFeaturesView, backButton);
+            backButton.setVisible(true);
+        }
 }

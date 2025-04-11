@@ -1,0 +1,104 @@
+name: Build MDCL
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false  # 添加此行，防止一个平台失败导致所有平台都停止
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            outputType: deb
+          - os: windows-latest
+            outputType: exe
+          - os: macos-latest
+            outputType: dmg
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    
+    - name: Set up JDK 21
+      uses: actions/setup-java@v3
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: maven
+    
+    - name: Debug Info
+      run: |
+        pwd
+        ls -la
+        echo "Checking for pom.xml:"
+        find . -name pom.xml
+      shell: bash
+    
+    - name: Build with Maven
+      run: |
+        if [ ! -f "pom.xml" ]; then
+          echo "Error: pom.xml not found in current directory"
+          exit 1
+        fi
+        mvn -B clean package --file pom.xml -X
+        if [ $? -ne 0 ]; then
+          echo "Maven build failed"
+          exit 1
+        fi
+      shell: bash
+    
+    - name: Package with jpackage (macOS)
+      if: matrix.os == 'macos-latest'
+      run: |
+        jpackage --input target/ \
+          --name MDCL \
+          --main-jar MDCL-main-1.0-SNAPSHOT.jar \
+          --main-class org.mcdcl.Main \
+          --type dmg \
+          --app-version 1.0.0 \
+          --vendor "MDCL" \
+          --mac-package-name "MDCL"
+    
+    - name: Package with jpackage (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        jpackage --input target/ `
+          --name MDCL `
+          --main-jar MDCL-main-1.0-SNAPSHOT.jar `
+          --main-class org.mcdcl.Main `
+          --type exe `
+          --app-version 1.0.0 `
+          --vendor "MDCL" `
+          --win-shortcut
+      shell: pwsh
+    
+    - name: Package with jpackage (Linux)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        jpackage --input target/ \
+          --name MDCL \
+          --main-jar MDCL-main-1.0-SNAPSHOT.jar \
+          --main-class org.mcdcl.Main \
+          --type deb \
+          --app-version 1.0.0 \
+          --vendor "MDCL" \
+          --linux-shortcut
+    
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: MDCL-${{ matrix.os }}
+        path: |
+          *.dmg
+          *.exe
+          *.deb
+        if-no-files-found: ignore

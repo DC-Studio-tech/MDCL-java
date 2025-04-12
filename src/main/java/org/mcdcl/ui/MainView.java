@@ -7,12 +7,12 @@ import org.kordamp.ikonli.materialdesign2.MaterialDesignA;
 import org.kordamp.ikonli.materialdesign2.MaterialDesignC;
 import org.kordamp.ikonli.materialdesign2.MaterialDesignI;
 import org.mcdcl.launcher.GameLauncher;
+import org.mcdcl.util.Settings;
+import org.mcdcl.util.SettingsManager;
 import org.to2mbn.jmccc.launch.LaunchException;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
-import org.mcdcl.util.Settings;
-import org.mcdcl.util.SettingsManager;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
@@ -21,11 +21,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
-import javafx.scene.layout.BorderPane;  // 添加这个导入
-import javafx.scene.layout.StackPane;  // 修改图标包导入
-import javafx.scene.layout.VBox;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 
 public class MainView extends BorderPane {
     private TabPane tabPane;
@@ -100,7 +100,27 @@ public class MainView extends BorderPane {
             backButton.setVisible(true);
         });
         gameSection.getChildren().add(versionsButton);
-        
+
+        // 添加下载按钮
+        Button downloadButton = createNavButton("下载");
+        downloadButton.setOnAction(event -> {
+            contentArea.getChildren().clear();
+            DownloadView downloadView = new DownloadView();
+            contentArea.getChildren().addAll(downloadView, backButton);
+            backButton.setVisible(true);
+        });
+        gameSection.getChildren().add(downloadButton);
+
+        // 添加版本管理按钮
+        Button versionManagementButton = createNavButton("版本管理");
+        versionManagementButton.setOnAction(event -> {
+            contentArea.getChildren().clear();
+            VersionManagementView versionManagementView = new VersionManagementView();
+            contentArea.getChildren().addAll(versionManagementView, backButton);
+            backButton.setVisible(true);
+        });
+        gameSection.getChildren().add(versionManagementButton);
+
         // 添加趣味功能按钮
         Button funFeaturesButton = createNavButton("趣味功能");
         funFeaturesButton.setOnAction(event -> {
@@ -200,7 +220,13 @@ public class MainView extends BorderPane {
                 icon = new FontIcon(MaterialDesignI.INFORMATION);
                 break;
             case "趣味功能":
-                icon = new FontIcon(MaterialDesignI.INFORMATION);
+                icon = new FontIcon(MaterialDesignI.INFORMATION);  // 改用 INFORMATION 图标
+                break;
+            case "下载":
+                icon = new FontIcon(MaterialDesignA.ARROW_DOWN);
+                break;
+            case "版本管理":
+                icon = new FontIcon(MaterialDesignA.ARCHIVE);
                 break;
         }
         
@@ -459,8 +485,6 @@ public class MainView extends BorderPane {
             moreFeaturesTab.setContent(new MoreFeaturesView());
             moreFeaturesTab.setClosable(false);
             tabPane.getTabs().add(moreFeaturesTab);
-            
-            // ... 现有代码 ...
         }
 
     private VBox createSidebar() {
@@ -472,9 +496,7 @@ public class MainView extends BorderPane {
             // 账户部分
             Label accountLabel = new Label("账户");
             accountLabel.getStyleClass().add("sidebar-section");
-    
-            Button accountSettingsBtn = new Button("账户设置");
-            accountSettingsBtn.getStyleClass().add("sidebar-button");
+            Button accountSettingsBtn = createNavButton("账户设置");
             accountSettingsBtn.setOnAction(e -> {
                 contentArea.getChildren().clear();
                 AccountSettingsView accountSettingsView = new AccountSettingsView();
@@ -486,8 +508,8 @@ public class MainView extends BorderPane {
             Label gameLabel = new Label("游戏");
             gameLabel.getStyleClass().add("sidebar-section");
     
-            Button versionsBtn = new Button("版本列表");
-            versionsBtn.getStyleClass().add("sidebar-button");
+            // 版本列表按钮
+            Button versionsBtn = createNavButton("版本列表");
             versionsBtn.setOnAction(e -> {
                 contentArea.getChildren().clear();
                 VersionView versionView = new VersionView();
@@ -506,20 +528,34 @@ public class MainView extends BorderPane {
                 backButton.setVisible(true);
             });
     
+            // 在gameSection中添加版本管理按钮
+            Button versionManagementButton = createNavButton("版本管理");
+            versionManagementButton.setOnAction(event -> {
+                contentArea.getChildren().clear();
+                VersionManagementView versionManagementView = new VersionManagementView();
+                contentArea.getChildren().addAll(versionManagementView, backButton);
+                backButton.setVisible(true);
+            });
+    
+            // 在游戏分类中添加下载按钮（在版本管理按钮之后）
+            Button downloadButton = createNavButton("下载");
+            downloadButton.setOnAction(event -> {
+                contentArea.getChildren().clear();
+                DownloadView downloadView = new DownloadView();
+                contentArea.getChildren().addAll(downloadView, backButton);
+                backButton.setVisible(true);
+            });
+    
             // 趣味功能部分
             Label funLabel = new Label("趣味功能");
             funLabel.getStyleClass().add("sidebar-section");
-    
-            Button funFeaturesBtn = new Button("趣味功能");
-            funFeaturesBtn.getStyleClass().add("sidebar-button");
+            Button funFeaturesBtn = createNavButton("趣味功能");
             funFeaturesBtn.setOnAction(e -> showFunFeatures());
     
             // 通用部分
             Label generalLabel = new Label("通用");
             generalLabel.getStyleClass().add("sidebar-section");
-    
-            Button settingsBtn = new Button("常规设置");
-            settingsBtn.getStyleClass().add("sidebar-button");
+            Button settingsBtn = createNavButton("常规设置");
             settingsBtn.setOnAction(e -> {
                 contentArea.getChildren().clear();
                 settingsView = new SettingsView();
@@ -527,8 +563,7 @@ public class MainView extends BorderPane {
                 backButton.setVisible(true);
             });
     
-            Button aboutBtn = new Button("关于");
-            aboutBtn.getStyleClass().add("sidebar-button");
+            Button aboutBtn = createNavButton("关于");
             aboutBtn.setOnAction(e -> {
                 contentArea.getChildren().clear();
                 AboutView aboutView = new AboutView();
@@ -536,9 +571,10 @@ public class MainView extends BorderPane {
                 backButton.setVisible(true);
             });
     
+            // 将所有组件添加到侧边栏
             sidebar.getChildren().addAll(
                 accountLabel, accountSettingsBtn,
-                gameLabel, versionsBtn,
+                gameLabel, versionsBtn, versionManagementButton, downloadButton,
                 funLabel, funFeaturesBtn,
                 generalLabel, settingsBtn, aboutBtn
             );

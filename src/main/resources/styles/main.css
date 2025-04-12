@@ -308,3 +308,28 @@
 }
 
 /* 其他样式保持不变 ... */
+.download-tabs {
+    -fx-padding: 0 0 0 0;  /* 移除TabPane的内边距 */
+}
+
+.download-tabs .tab-header-area {
+    -fx-padding: 0 0 0 20px;  /* 为tab标题区域添加左边距 */
+}
+
+.download-button {
+    -fx-background-color: #00FFA3;
+    -fx-text-fill: #2E3440;
+    -fx-font-weight: bold;
+    -fx-padding: 8 15;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+
+.download-button:hover {
+    -fx-background-color: derive(#00FFA3, -10%);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,255,163,0.4), 8, 0, 0, 0);
+}
+
+.download-button:pressed {
+    -fx-background-color: derive(#00FFA3, -20%);
+}

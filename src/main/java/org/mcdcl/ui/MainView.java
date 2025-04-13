@@ -254,6 +254,12 @@ public class MainView extends BorderPane {
             settingsView = new SettingsView();
         }
 
+        // 添加测试错误视图的代码 - 可以通过注释切换来测试
+         if (false) { // 设置为true来测试错误视图,不需要的时候改成false
+            simulateGameLaunchError();
+            return;
+        }
+
         String javaPath = settingsView.getJavaPathComboBox().getValue();
         if (javaPath == null || javaPath.isEmpty()) {
             showAlert("Java路径未配置", "请在常规设置中选择或配置Java路径");
@@ -316,7 +322,17 @@ public class MainView extends BorderPane {
                 } else {
                     System.out.println("警告：游戏进程可能未成功启动");
                     javafx.application.Platform.runLater(() -> {
-                        showAlert("启动异常", "游戏进程可能未成功启动，请检查Java路径和Minecraft目录设置");
+                        ErrorView errorView = new ErrorView(
+                            "游戏启动失败", 
+                            "启动Minecraft时发生错误: 游戏进程可能未成功启动", 
+                            new Exception("游戏进程可能未成功启动")
+                        );
+                        
+                        // 设置返回处理器
+                        errorView.setReturnHandler(evt -> showWelcomeView());
+                        
+                        // 将errorView添加到场景中
+                        contentArea.getChildren().setAll(errorView);
                     });
                 }
                 
@@ -397,7 +413,17 @@ public class MainView extends BorderPane {
                 } else {
                     System.out.println("警告：游戏进程可能未成功启动");
                     javafx.application.Platform.runLater(() -> {
-                        showAlert("启动异常", "游戏进程可能未成功启动，请检查Java路径和Minecraft目录设置");
+                        ErrorView errorView = new ErrorView(
+                            "游戏启动失败", 
+                            "启动Minecraft时发生错误: 游戏进程可能未成功启动", 
+                            new Exception("游戏进程可能未成功启动")
+                        );
+                        
+                        // 设置返回处理器
+                        errorView.setReturnHandler(evt -> showWelcomeView());
+                        
+                        // 将errorView添加到场景中
+                        contentArea.getChildren().setAll(errorView);
                     });
                 }
                 
@@ -423,7 +449,7 @@ public class MainView extends BorderPane {
                     launchButton.setText("启动游戏");
                 });
             }).start();
-
+            
         } catch (NumberFormatException e) {
             showAlert("内存配置错误", "请输入有效的内存大小");
         } catch (IOException e) {
@@ -431,6 +457,29 @@ public class MainView extends BorderPane {
         } catch (LaunchException e) {
             showAlert("启动失败", "游戏启动失败: " + e.getMessage());
         }
+    }
+    
+    // 添加一个模拟游戏启动错误的方法
+    private void simulateGameLaunchError() {
+        Exception simulatedError = new Exception("这是一个模拟的游戏启动错误");
+        simulatedError.setStackTrace(new StackTraceElement[] {
+            new StackTraceElement("GameLauncher", "launchGame", "GameLauncher.java", 120),
+            new StackTraceElement("MinecraftLauncher", "launch", "MinecraftLauncher.java", 85),
+            new StackTraceElement("JavaProcess", "start", "JavaProcess.java", 42),
+            new StackTraceElement("ProcessBuilder", "start", "ProcessBuilder.java", 1029)
+        });
+        
+        ErrorView errorView = new ErrorView(
+            "游戏启动失败", 
+            "启动Minecraft时发生错误: 无法创建Java进程", 
+            simulatedError
+        );
+        
+        // 设置返回处理器
+        errorView.setReturnHandler(evt -> showWelcomeView());
+        
+        // 将errorView添加到场景中
+        contentArea.getChildren().setAll(errorView);
     }
     
     private void showAlert(String title, String content) {
@@ -486,106 +535,106 @@ public class MainView extends BorderPane {
             moreFeaturesTab.setClosable(false);
             tabPane.getTabs().add(moreFeaturesTab);
         }
-
-    private VBox createSidebar() {
-            VBox sidebar = new VBox(10);
-            sidebar.setPadding(new Insets(20));
-            sidebar.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
-            sidebar.setPrefWidth(200);
     
-            // 账户部分
-            Label accountLabel = new Label("账户");
-            accountLabel.getStyleClass().add("sidebar-section");
-            Button accountSettingsBtn = createNavButton("账户设置");
-            accountSettingsBtn.setOnAction(e -> {
-                contentArea.getChildren().clear();
-                AccountSettingsView accountSettingsView = new AccountSettingsView();
-                contentArea.getChildren().addAll(accountSettingsView, backButton);
-                backButton.setVisible(true);
-            });
-    
-            // 游戏部分
-            Label gameLabel = new Label("游戏");
-            gameLabel.getStyleClass().add("sidebar-section");
-    
-            // 版本列表按钮
-            Button versionsBtn = createNavButton("版本列表");
-            versionsBtn.setOnAction(e -> {
-                contentArea.getChildren().clear();
-                VersionView versionView = new VersionView();
-                
-                // 为选择版本按钮添加事件处理器
-                versionView.getSelectButton().setOnAction(event -> {
-                    String selectedVersion = versionView.getVersionList().getSelectionModel().getSelectedItem();
-                    if (selectedVersion != null && !selectedVersion.isEmpty()) {
-                        launchGame(selectedVersion);
-                    } else {
-                        showAlert("未选择版本", "请先从列表中选择一个游戏版本");
-                    }
+        private VBox createSidebar() {
+                VBox sidebar = new VBox(10);
+                sidebar.setPadding(new Insets(20));
+                sidebar.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
+                sidebar.setPrefWidth(200);
+            
+                // 账户部分
+                Label accountLabel = new Label("账户");
+                accountLabel.getStyleClass().add("sidebar-section");
+                Button accountSettingsBtn = createNavButton("账户设置");
+                accountSettingsBtn.setOnAction(e -> {
+                    contentArea.getChildren().clear();
+                    AccountSettingsView accountSettingsView = new AccountSettingsView();
+                    contentArea.getChildren().addAll(accountSettingsView, backButton);
+                    backButton.setVisible(true);
                 });
-                
-                contentArea.getChildren().addAll(versionView, backButton);
-                backButton.setVisible(true);
-            });
-    
-            // 在gameSection中添加版本管理按钮
-            Button versionManagementButton = createNavButton("版本管理");
-            versionManagementButton.setOnAction(event -> {
-                contentArea.getChildren().clear();
-                VersionManagementView versionManagementView = new VersionManagementView();
-                contentArea.getChildren().addAll(versionManagementView, backButton);
-                backButton.setVisible(true);
-            });
-    
-            // 在游戏分类中添加下载按钮（在版本管理按钮之后）
-            Button downloadButton = createNavButton("下载");
-            downloadButton.setOnAction(event -> {
-                contentArea.getChildren().clear();
-                DownloadView downloadView = new DownloadView();
-                contentArea.getChildren().addAll(downloadView, backButton);
-                backButton.setVisible(true);
-            });
-    
-            // 趣味功能部分
-            Label funLabel = new Label("趣味功能");
-            funLabel.getStyleClass().add("sidebar-section");
-            Button funFeaturesBtn = createNavButton("趣味功能");
-            funFeaturesBtn.setOnAction(e -> showFunFeatures());
-    
-            // 通用部分
-            Label generalLabel = new Label("通用");
-            generalLabel.getStyleClass().add("sidebar-section");
-            Button settingsBtn = createNavButton("常规设置");
-            settingsBtn.setOnAction(e -> {
-                contentArea.getChildren().clear();
-                settingsView = new SettingsView();
-                contentArea.getChildren().addAll(settingsView, backButton);
-                backButton.setVisible(true);
-            });
-    
-            Button aboutBtn = createNavButton("关于");
-            aboutBtn.setOnAction(e -> {
-                contentArea.getChildren().clear();
-                AboutView aboutView = new AboutView();
-                contentArea.getChildren().addAll(aboutView, backButton);
-                backButton.setVisible(true);
-            });
-    
-            // 将所有组件添加到侧边栏
-            sidebar.getChildren().addAll(
-                accountLabel, accountSettingsBtn,
-                gameLabel, versionsBtn, versionManagementButton, downloadButton,
-                funLabel, funFeaturesBtn,
-                generalLabel, settingsBtn, aboutBtn
-            );
-    
-            return sidebar;
-        }
-    
-        private void showFunFeatures() {
-            contentArea.getChildren().clear();
-            MoreFeaturesView moreFeaturesView = new MoreFeaturesView();
-            contentArea.getChildren().addAll(moreFeaturesView, backButton);
-            backButton.setVisible(true);
-        }
+            
+                // 游戏部分
+                Label gameLabel = new Label("游戏");
+                gameLabel.getStyleClass().add("sidebar-section");
+            
+                // 版本列表按钮
+                Button versionsBtn = createNavButton("版本列表");
+                versionsBtn.setOnAction(e -> {
+                    contentArea.getChildren().clear();
+                    VersionView versionView = new VersionView();
+                    
+                    // 为选择版本按钮添加事件处理器
+                    versionView.getSelectButton().setOnAction(event -> {
+                        String selectedVersion = versionView.getVersionList().getSelectionModel().getSelectedItem();
+                        if (selectedVersion != null && !selectedVersion.isEmpty()) {
+                            launchGame(selectedVersion);
+                        } else {
+                            showAlert("未选择版本", "请先从列表中选择一个游戏版本");
+                        }
+                    });
+                    
+                    contentArea.getChildren().addAll(versionView, backButton);
+                    backButton.setVisible(true);
+                });
+            
+                // 在gameSection中添加版本管理按钮
+                Button versionManagementButton = createNavButton("版本管理");
+                versionManagementButton.setOnAction(event -> {
+                    contentArea.getChildren().clear();
+                    VersionManagementView versionManagementView = new VersionManagementView();
+                    contentArea.getChildren().addAll(versionManagementView, backButton);
+                    backButton.setVisible(true);
+                });
+            
+                // 在游戏分类中添加下载按钮（在版本管理按钮之后）
+                Button downloadButton = createNavButton("下载");
+                downloadButton.setOnAction(event -> {
+                    contentArea.getChildren().clear();
+                    DownloadView downloadView = new DownloadView();
+                    contentArea.getChildren().addAll(downloadView, backButton);
+                    backButton.setVisible(true);
+                });
+            
+                // 趣味功能部分
+                Label funLabel = new Label("趣味功能");
+                funLabel.getStyleClass().add("sidebar-section");
+                Button funFeaturesBtn = createNavButton("趣味功能");
+                funFeaturesBtn.setOnAction(e -> showFunFeatures());
+            
+                // 通用部分
+                Label generalLabel = new Label("通用");
+                generalLabel.getStyleClass().add("sidebar-section");
+                Button settingsBtn = createNavButton("常规设置");
+                settingsBtn.setOnAction(e -> {
+                    contentArea.getChildren().clear();
+                    settingsView = new SettingsView();
+                    contentArea.getChildren().addAll(settingsView, backButton);
+                    backButton.setVisible(true);
+                });
+            
+                Button aboutBtn = createNavButton("关于");
+                aboutBtn.setOnAction(e -> {
+                    contentArea.getChildren().clear();
+                    AboutView aboutView = new AboutView();
+                    contentArea.getChildren().addAll(aboutView, backButton);
+                    backButton.setVisible(true);
+                });
+            
+                // 将所有组件添加到侧边栏
+                sidebar.getChildren().addAll(
+                    accountLabel, accountSettingsBtn,
+                    gameLabel, versionsBtn, versionManagementButton, downloadButton,
+                    funLabel, funFeaturesBtn,
+                    generalLabel, settingsBtn, aboutBtn
+                );
+            
+                        return sidebar;
+                    }
+                    
+                    private void showFunFeatures() {
+                        contentArea.getChildren().clear();
+                        MoreFeaturesView moreFeaturesView = new MoreFeaturesView();
+                        contentArea.getChildren().addAll(moreFeaturesView, backButton);
+                        backButton.setVisible(true);
+                    }
 }

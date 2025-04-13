@@ -5,12 +5,9 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 
 public class VersionManagementView extends VBox {
     
@@ -40,5 +37,13 @@ public class VersionManagementView extends VBox {
         
         // 将组件添加到布局中
         getChildren().addAll(titleLabel, versionListView, buttonBox);
+
+        //TODO: 加入mod管理
+        //TODO: 加入世界管理
+        //TODO: 加入独立版本游戏设置
+        //TODO: 加入测试游戏
+        //TODO: 加入mod更新按钮
+        //TODO: 加入mod安装按钮（跳转到下载页面）
+        //TODO: 加入mod删除按钮
     }
 }

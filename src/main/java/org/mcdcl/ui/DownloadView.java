@@ -217,6 +217,15 @@ class ModpackDownloadTab extends VBox {
         setPadding(new Insets(10));
         setSpacing(10);
         // TODO: 添加整合包列表和下载功能
+        Label titleLabel = new Label("整合包下载");
+        titleLabel.getStyleClass().add("section-title");
+        Label descriptionLabel = new Label("整合包下载功能尚未实现。");
+        descriptionLabel.getStyleClass().add("section-description");
+        getChildren().addAll(titleLabel, descriptionLabel);
+        getStyleClass().add("section");
+        setAlignment(Pos.CENTER);
+        setPadding(new Insets(20));
+        setSpacing(10);
     }
 }
 
@@ -226,6 +235,15 @@ class ModDownloadTab extends VBox {
         setPadding(new Insets(10));
         setSpacing(10);
         // TODO: 添加模组列表和下载功能
+        Label titleLabel = new Label("模组下载");
+        titleLabel.getStyleClass().add("section-title");
+        Label descriptionLabel = new Label("模组下载功能尚未实现。");
+        descriptionLabel.getStyleClass().add("section-description");
+        getChildren().addAll(titleLabel, descriptionLabel);
+        getStyleClass().add("section");
+        setAlignment(Pos.CENTER);
+        setPadding(new Insets(20));
+        setSpacing(10);
     }
 }
 
@@ -235,5 +253,14 @@ class ResourcePackDownloadTab extends VBox {
         setPadding(new Insets(10));
         setSpacing(10);
         // TODO: 添加资源包列表和下载功能
+        Label titleLabel = new Label("资源包下载");
+        titleLabel.getStyleClass().add("section-title");
+        Label descriptionLabel = new Label("资源包下载功能尚未实现。");
+        descriptionLabel.getStyleClass().add("section-description");
+        getChildren().addAll(titleLabel, descriptionLabel);
+        getStyleClass().add("section");
+        setAlignment(Pos.CENTER);
+        setPadding(new Insets(20));
+        setSpacing(10);
     }
 }

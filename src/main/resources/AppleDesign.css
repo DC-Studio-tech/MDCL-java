@@ -1,0 +1,175 @@
+/* Apple设计风格CSS */
+.root {
+    /* 苹果系统颜色 - 使用最新的SF颜色系统 */
+    -fx-system-blue: #0A84FF;
+    -fx-system-gray: #98989D;
+    -fx-system-green: #32D74B;
+    -fx-system-indigo: #5E5CE6;
+    -fx-system-orange: #FF9F0A;
+    -fx-system-pink: #FF375F;
+    -fx-system-purple: #BF5AF2;
+    -fx-system-red: #FF453A;
+    -fx-system-teal: #64D2FF;
+    -fx-system-yellow: #FFD60A;
+    
+    /* 背景颜色 - 使用SF背景色值 */
+    -fx-system-background: rgba(242, 242, 247, 0.92);
+    -fx-secondary-background: rgba(229, 229, 234, 0.92);
+    
+    /* 文本颜色 - 遵循SF文本规范 */
+    -fx-primary-text: #000000;
+    -fx-secondary-text: rgba(60, 60, 67, 0.6);
+    -fx-tertiary-text: rgba(60, 60, 67, 0.3);
+    
+    /* SF标准圆角半径 */
+    -fx-corner-radius-small: 6px;
+    -fx-corner-radius-medium: 10px;
+    -fx-corner-radius-large: 16px;
+    
+    /* SF标准阴影效果 */
+    -fx-shadow-light: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 4, 0, 0, 1);
+    -fx-shadow-medium: dropshadow(gaussian, rgba(0, 0, 0, 0.12), 8, 0, 0, 4);
+    -fx-shadow-heavy: dropshadow(gaussian, rgba(0, 0, 0, 0.14), 16, 0, 0, 8);
+}
+
+/* 基础排版 */
+* {
+    -fx-font-family: "SF Pro Text", "-apple-system";
+    -fx-text-fill: -fx-primary-text;
+    -fx-font-smoothing-type: gray;
+}
+
+/* 标题样式 */
+.section-title {
+    -fx-font-family: "SF Pro Display", "-apple-system";
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 16px 0;
+}
+
+/* 按钮样式 */
+.button {
+    -fx-background-color: -fx-system-blue;
+    -fx-text-fill: white;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-effect: -fx-shadow-light;
+    -fx-padding: 6px 12px;
+    -fx-cursor: hand;
+    -fx-font-size: 13px;
+    -fx-font-weight: medium;
+    -fx-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.button:hover {
+    -fx-background-color: derive(-fx-system-blue, 15%);
+    -fx-effect: -fx-shadow-medium;
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.button:pressed {
+    -fx-background-color: derive(-fx-system-blue, -15%);
+    -fx-effect: -fx-shadow-light;
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+}
+
+/* 输入框样式 */
+.text-field, .text-area {
+    -fx-background-color: white;
+    -fx-background-radius: -fx-corner-radius-medium;
+    -fx-border-color: rgba(0, 0, 0, 0.1);
+    -fx-border-radius: -fx-corner-radius-medium;
+    -fx-padding: 12px 16px;
+    -fx-font-size: 14px;
+    -fx-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.text-field:focused, .text-area:focused {
+    -fx-border-color: -fx-system-blue;
+    -fx-border-width: 2px;
+    -fx-effect: dropshadow(gaussian, rgba(10, 132, 255, 0.2), 8, 0, 0, 0);
+    -fx-background-color: white;
+}
+
+/* 下拉框样式 */
+.combo-box {
+    -fx-background-color: white;
+    -fx-background-radius: -fx-corner-radius-medium;
+    -fx-border-color: rgba(0, 0, 0, 0.1);
+    -fx-border-radius: -fx-corner-radius-medium;
+    -fx-padding: 4px;
+}
+
+.combo-box:focused {
+    -fx-border-color: -fx-system-blue;
+    -fx-border-width: 2px;
+}
+
+.combo-box .list-cell {
+    -fx-padding: 8px 12px;
+    -fx-text-fill: -fx-primary-text;
+}
+
+/* 滑块样式 */
+.slider {
+    -fx-show-tick-marks: true;
+    -fx-show-tick-labels: true;
+    -fx-snap-to-ticks: true;
+}
+
+.slider .track {
+    -fx-background-color: rgba(0, 0, 0, 0.1);
+    -fx-background-radius: 4px;
+    -fx-pref-height: 4px;
+}
+
+.slider .thumb {
+    -fx-background-color: white;
+    -fx-border-color: -fx-system-blue;
+    -fx-border-width: 2px;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-pref-width: 24px;
+    -fx-pref-height: 24px;
+    -fx-effect: -fx-shadow-light;
+}
+
+/* 预设按钮样式 */
+.preset-button {
+    -fx-background-color: rgba(0, 0, 0, 0.05);
+    -fx-text-fill: -fx-primary-text;
+    -fx-background-radius: 8px;
+    -fx-padding: 8px 16px;
+    -fx-font-size: 13px;
+    -fx-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.preset-button:hover {
+    -fx-background-color: rgba(0, 0, 0, 0.1);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.preset-button:pressed {
+    -fx-background-color: rgba(0, 0, 0, 0.15);
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+}
+
+/* 保存按钮特殊样式 */
+.save-button {
+    -fx-background-color: -fx-system-blue;
+    -fx-font-weight: bold;
+    -fx-min-width: 120px;
+}
+
+/* 工具提示样式 */
+.tooltip {
+    -fx-background-color: rgba(0, 0, 0, 0.8);
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-padding: 8px 12px;
+    -fx-background-radius: 6px;
+}

@@ -5,13 +5,16 @@ import java.lang.reflect.Method;
 
 import org.mcdcl.ui.MainView;
 
+import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class Main extends Application {
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("MDCL - v1.0.1");
@@ -64,9 +67,17 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(1024);
         primaryStage.setMinHeight(768);
+
+        // 添加淡入动画
+        mainView.setOpacity(0.0); // 初始设置为透明
+        FadeTransition fadeIn = new FadeTransition(Duration.millis(500), mainView);
+        fadeIn.setFromValue(0.0);
+        fadeIn.setToValue(1.0);
+        fadeIn.play(); // 在显示舞台前播放动画
+
         primaryStage.show();
     }
-    
+
     public static void main(String[] args) {
         launch(args);
     }

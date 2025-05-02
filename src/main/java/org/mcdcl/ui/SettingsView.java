@@ -15,6 +15,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
@@ -23,7 +24,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
-public class SettingsView extends VBox {
+public class SettingsView extends ScrollPane {
+    private VBox contentBox;
     private ComboBox<String> javaPathComboBox;
     private Button chooseJavaButton;
     private Slider memorySlider;
@@ -39,9 +41,15 @@ public class SettingsView extends VBox {
     private TextField backgroundPathField;  // 添加背景图片路径字段
 
     public SettingsView() {
-        setSpacing(15);
-        setPadding(new Insets(20));
-        setAlignment(Pos.TOP_CENTER);
+        contentBox = new VBox();
+        contentBox.setSpacing(15);
+        contentBox.setPadding(new Insets(20));
+        contentBox.setAlignment(Pos.TOP_CENTER);
+        
+        setContent(contentBox);
+        setFitToWidth(true);
+        setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
+        setHbarPolicy(ScrollBarPolicy.NEVER);
 
         // 标题
         Label titleLabel = new Label("常规设置");
@@ -175,6 +183,35 @@ public class SettingsView extends VBox {
         themeComboBox.setValue(savedSettings.getTheme());
         themeComboBox.setPrefWidth(300);
         
+        // 样式表设置
+        Label styleLabel = new Label("界面样式:");
+        styleComboBox = new ComboBox<>();
+        styleComboBox.getItems().addAll("Apple Design", "Google Design", "Default");
+        styleComboBox.setValue("Apple Design");
+        styleComboBox.setPrefWidth(300);
+        
+        // 添加样式表切换监听器
+        styleComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                getScene().getStylesheets().clear();
+                String cssPath;
+                switch (newVal) {
+                    case "Apple Design" -> cssPath = "/AppleDesign.css";
+                    case "Google Design" -> cssPath = "/GoogleDesign.css";
+                    default -> cssPath = "/styles/main.css";
+                }
+                try {
+                    String cssUrl = getClass().getResource(cssPath).toExternalForm();
+                    getScene().getStylesheets().add(cssUrl);
+                } catch (NullPointerException e) {
+                    showErrorAlert("无法加载样式表文件：" + cssPath);
+                    // 加载失败时使用默认样式
+                    String defaultCssUrl = getClass().getResource("/styles/main.css").toExternalForm();
+                    getScene().getStylesheets().add(defaultCssUrl);
+                }                
+            }
+        });
+        
         // 添加背景图片设置
         Label backgroundLabel = new Label("背景图片:");
         HBox backgroundBox = new HBox(10);
@@ -234,7 +271,7 @@ public class SettingsView extends VBox {
         saveButton.setMaxWidth(200);
 
         // 添加所有组件到布局
-        getChildren().addAll(
+        contentBox.getChildren().addAll(
             titleLabel,
             javaPathLabel, javaPathBox,
             maxMemoryLabel, memoryBox,
@@ -243,11 +280,13 @@ public class SettingsView extends VBox {
             gameArgsLabel, gameArgsField,
             gamePresetPane,
             themeLabel, themeComboBox,
+            styleLabel, styleComboBox,
             backgroundLabel, backgroundBox,  // 添加背景设置
             minecraftPathLabel, minecraftPathBox,
             saveButton
         );
 
+        setContent(contentBox);
         // 设置保存按钮事件
         saveButton.setOnAction(event -> saveSettings());
     }
@@ -338,59 +377,10 @@ public class SettingsView extends VBox {
         alert.showAndWait();
     }
 
-    // 将类外的代码移动到类内部
-    private void initializeUI() {
-        // 添加主题选择
-        Label themeLabel = new Label("主题设置");
-        ComboBox<String> themeComboBox = new ComboBox<>();
-        themeComboBox.getItems().addAll("深色主题", "浅色主题", "自定义主题");
-        themeComboBox.setValue("深色主题");
-        
-        // 添加背景图片选择
-        Label backgroundLabel = new Label("背景图片");
-        HBox backgroundBox = new HBox(10);
-        TextField backgroundPathField = new TextField();
-        Button selectBackgroundButton = new Button("选择图片");
-        
-        selectBackgroundButton.setOnAction(e -> {
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("图片文件", "*.jpg", "*.png")
-            );
-            File file = fileChooser.showOpenDialog(getScene().getWindow());
-            if (file != null) {
-                backgroundPathField.setText(file.getAbsolutePath());
-                updateBackground(file.getAbsolutePath());
-            }
-        });
-        
-        backgroundBox.getChildren().addAll(backgroundPathField, selectBackgroundButton);
 
-        // 保存设置
-        Button saveButton = new Button("保存设置");
-        saveButton.setOnAction(e -> {
-            try {
-                Settings settings = SettingsManager.loadSettings();
-                settings.setBackgroundImage(backgroundPathField.getText());
-                settings.setTheme(themeComboBox.getValue().equals("深色主题") ? "dark" : 
-                                themeComboBox.getValue().equals("浅色主题") ? "light" : "custom");
-                SettingsManager.saveSettings(settings);
-                updateThemeAndBackground();
-            } catch (IOException ex) {
-                showErrorAlert("保存设置失败: " + ex.getMessage());
-            }
-        });
 
-        // 添加到布局
-        getChildren().addAll(
-            themeLabel,
-            themeComboBox,
-            backgroundLabel,
-            backgroundBox,
-            saveButton
-        );
-    }
-
+    private ComboBox<String> styleComboBox;
+    
     private void updateThemeAndBackground() {
         try {
             Settings settings = SettingsManager.loadSettings();
@@ -402,6 +392,27 @@ public class SettingsView extends VBox {
                     case "浅色主题" -> getScene().getRoot().getStyleClass().add("theme-light");
                     case "深色主题" -> getScene().getRoot().getStyleClass().add("theme-dark");
                     case "自定义主题" -> getScene().getRoot().getStyleClass().add("theme-custom");
+                }
+            }
+            
+            // 更新样式表
+            String style = styleComboBox.getValue();
+            if (style != null) {
+                getScene().getStylesheets().clear();
+                if (style.equals("Apple Design")) {
+                    URL styleUrl = getClass().getResource("/AppleDesign.css");
+                    if (styleUrl != null) {
+                        getScene().getStylesheets().add(styleUrl.toExternalForm());
+                    } else {
+                        showErrorAlert("无法加载样式表文件：/AppleDesign.css");
+                    }
+                } else {
+                    URL styleUrl = getClass().getResource("/styles/main.css");
+                    if (styleUrl != null) {
+                        getScene().getStylesheets().add(styleUrl.toExternalForm());
+                    } else {
+                        showErrorAlert("无法加载样式表文件：/styles/main.css");
+                    }
                 }
             }
             

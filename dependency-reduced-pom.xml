@@ -7,52 +7,16 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.panteleyev</groupId>
-        <artifactId>jpackage-maven-plugin</artifactId>
-        <version>1.6.0</version>
-        <configuration>
-          <name>MDCL</name>
-          <appVersion>1.0.1</appVersion>
-          <vendor>MDCL</vendor>
-          <destination>target/dist</destination>
-          <mainClass>org.mcdcl.Main</mainClass>
-          <mainJar>MDCL-${project.version}.jar</mainJar>
-          <input>target</input>
-          <type>DMG</type>
-          <icon>src/main/resources/images/icon.icns</icon>
-          <macPackageIdentifier>com.dcstudio.mdcl</macPackageIdentifier>
-          <javaOptions>
-            <option>-Dfile.encoding=UTF-8</option>
-          </javaOptions>
-          <addModules>
-            <module>javafx.controls</module>
-            <module>javafx.fxml</module>
-            <module>javafx.web</module>
-            <module>javafx.swing</module>
-            <module>javafx.media</module>
-          </addModules>
-          <modulePaths>
-            <modulePath>/Users/zhuangweiwei/.m2/repository/org/openjfx/javafx-controls/21/javafx-controls-21-mac-aarch64.jar</modulePath>
-            <modulePath>/Users/zhuangweiwei/.m2/repository/org/openjfx/javafx-fxml/21/javafx-fxml-21-mac-aarch64.jar</modulePath>
-            <modulePath>/Users/zhuangweiwei/.m2/repository/org/openjfx/javafx-web/21/javafx-web-21-mac-aarch64.jar</modulePath>
-            <modulePath>/Users/zhuangweiwei/.m2/repository/org/openjfx/javafx-swing/21/javafx-swing-21-mac-aarch64.jar</modulePath>
-            <modulePath>/Users/zhuangweiwei/.m2/repository/org/openjfx/javafx-graphics/21/javafx-graphics-21-mac-aarch64.jar</modulePath>
-            <modulePath>/Users/zhuangweiwei/.m2/repository/org/openjfx/javafx-base/21/javafx-base-21-mac-aarch64.jar</modulePath>
-            <modulePath>/Users/zhuangweiwei/.m2/repository/org/openjfx/javafx-media/21/javafx-media-21-mac-aarch64.jar</modulePath>
-          </modulePaths>
-        </configuration>
-      </plugin>
-      <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.11.0</version>
+        <version>3.10.1</version>
         <configuration>
-          <source>${maven.compiler.source}</source>
-          <target>${maven.compiler.target}</target>
+          <source>21</source>
+          <target>21</target>
         </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.4.1</version>
+        <version>3.5.0</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -63,15 +27,100 @@
               <transformers>
                 <transformer>
                   <mainClass>org.mcdcl.Main</mainClass>
+                  <manifestEntries>
+                    <Main-Class>org.mcdcl.Main</Main-Class>
+                    <Class-Path>.</Class-Path>
+                    <Add-Opens>java.base/java.lang=ALL-UNNAMED</Add-Opens>
+                    <Add-Opens>java.base/java.io=ALL-UNNAMED</Add-Opens>
+                    <Add-Opens>javafx.graphics/com.sun.javafx.application=ALL-UNNAMED</Add-Opens>
+                    <Add-Exports>javafx.graphics/com.sun.javafx.application=ALL-UNNAMED</Add-Exports>
+                    <Add-Exports>javafx.base/com.sun.javafx.runtime=ALL-UNNAMED</Add-Exports>
+                    <Add-Opens>javafx.graphics/com.sun.javafx.tk=ALL-UNNAMED</Add-Opens>
+                    <Add-Opens>javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED</Add-Opens>
+                    <Add-Exports>javafx.graphics/com.sun.glass.ui=ALL-UNNAMED</Add-Exports>
+                    <Add-Exports>javafx.graphics/com.sun.javafx.tk.quantum=ALL-UNNAMED</Add-Exports>
+                    <Add-Opens>javafx.base/com.sun.javafx=ALL-UNNAMED</Add-Opens>
+                    <Add-Opens>javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED</Add-Opens>
+                    <Add-Opens>javafx.media/com.sun.media.jfxmedia=ALL-UNNAMED</Add-Opens>
+                    <Add-Opens>javafx.web/com.sun.webkit=ALL-UNNAMED</Add-Opens>
+                    <Add-Exports>javafx.base/com.sun.javafx.logging=ALL-UNNAMED</Add-Exports>
+                    <Add-Exports>javafx.graphics/com.sun.javafx.css=ALL-UNNAMED</Add-Exports>
+                  </manifestEntries>
+                </transformer>
+                <transformer>
+                  <resource>META-INF/services/javafx.platform.Capabilities</resource>
+                </transformer>
+                <transformer />
+                <transformer>
+                  <resource>module-info.class</resource>
+                </transformer>
+                <transformer>
+                  <manifestEntries>
+                    <Main-Class>org.mcdcl.Main</Main-Class>
+                    <Class-Path>.</Class-Path>
+                    <Add-Opens>java.base/java.lang=ALL-UNNAMED</Add-Opens>
+                    <Add-Opens>java.base/java.io=ALL-UNNAMED</Add-Opens>
+                    <Add-Opens>javafx.graphics/com.sun.javafx.application=ALL-UNNAMED</Add-Opens>
+                    <Add-Exports>javafx.graphics/com.sun.javafx.application=ALL-UNNAMED</Add-Exports>
+                    <Add-Exports>javafx.base/com.sun.javafx.runtime=ALL-UNNAMED</Add-Exports>
+                    <Add-Opens>javafx.graphics/com.sun.javafx.tk=ALL-UNNAMED</Add-Opens>
+                    <Add-Opens>javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED</Add-Opens>
+                    <Add-Exports>javafx.graphics/com.sun.glass.ui=ALL-UNNAMED</Add-Exports>
+                    <Add-Exports>javafx.graphics/com.sun.javafx.tk.quantum=ALL-UNNAMED</Add-Exports>
+                    <Add-Opens>javafx.base/com.sun.javafx=ALL-UNNAMED</Add-Opens>
+                    <Add-Opens>javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED</Add-Opens>
+                    <Add-Opens>javafx.media/com.sun.media.jfxmedia=ALL-UNNAMED</Add-Opens>
+                    <Add-Opens>javafx.web/com.sun.webkit=ALL-UNNAMED</Add-Opens>
+                    <Add-Exports>javafx.base/com.sun.javafx.logging=ALL-UNNAMED</Add-Exports>
+                    <Add-Exports>javafx.graphics/com.sun.javafx.css=ALL-UNNAMED</Add-Exports>
+                  </manifestEntries>
+                </transformer>
+                <transformer>
+                  <resource>META-INF/services/javafx.platform.Capabilities</resource>
                 </transformer>
               </transformers>
-              <outputFile>${project.build.directory}/MDCL-${project.version}.jar</outputFile>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                  </excludes>
+                </filter>
+              </filters>
             </configuration>
           </execution>
         </executions>
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>jpackage</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-jpackage-plugin</artifactId>
+            <version>3.2.0</version>
+            <configuration>
+              <name>MDCL</name>
+              <vendor>org.mcdcl</vendor>
+              <mainClass>org.mcdcl.Main</mainClass>
+              <dest>target/jpackage</dest>
+              <appVersion>1.0</appVersion>
+              <linuxShortcut>true</linuxShortcut>
+              <winShortcut>true</winShortcut>
+              <macPackageName>MDCL</macPackageName>
+              <macPackageIdentifier>org.mcdcl.MDCL</macPackageIdentifier>
+              <macSigningKeyUser>Developer ID Application</macSigningKeyUser>
+              <icon>src/main/resources/icon.icns</icon>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
   <properties>
     <maven.compiler.target>21</maven.compiler.target>
     <maven.compiler.source>21</maven.compiler.source>

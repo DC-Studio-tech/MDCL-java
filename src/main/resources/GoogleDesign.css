@@ -1,0 +1,250 @@
+/* Google Material Design 3 风格CSS */
+.root {
+    /* 主题色 - Material Design 3 调色板 */
+    --md-primary: #6750A4;
+    --md-on-primary: #FFFFFF;
+    --md-primary-container: #EADDFF;
+    --md-on-primary-container: #21005E;
+    
+    --md-secondary: #625B71;
+    --md-on-secondary: #FFFFFF;
+    --md-secondary-container: #E8DEF8;
+    --md-on-secondary-container: #1E192B;
+    
+    --md-tertiary: #7D5260;
+    --md-on-tertiary: #FFFFFF;
+    --md-tertiary-container: #FFD8E4;
+    --md-on-tertiary-container: #31111D;
+    
+    /* 错误状态色 */
+    --md-error: #B3261E;
+    --md-on-error: #FFFFFF;
+    --md-error-container: #F9DEDC;
+    --md-on-error-container: #410E0B;
+    
+    /* 背景和表面色 */
+    --md-background: #FFFBFE;
+    --md-on-background: #1C1B1F;
+    --md-surface: #FFFBFE;
+    --md-on-surface: #1C1B1F;
+    --md-surface-variant: #E7E0EC;
+    --md-on-surface-variant: #49454F;
+    
+    /* 轮廓和阴影 */
+    --md-outline: #79747E;
+    --md-outline-variant: #CAC4D0;
+    --md-shadow: #000000;
+    
+    /* 海拔阴影 */
+    --md-elevation-1: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.14);
+    --md-elevation-2: 0 3px 6px rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.12);
+    --md-elevation-3: 0 10px 20px rgba(0,0,0,0.15), 0 3px 6px rgba(0,0,0,0.10);
+    --md-elevation-4: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+    --md-elevation-5: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
+    
+    /* 字体 */
+    --md-font-family: 'Roboto', 'Noto Sans SC', sans-serif;
+    
+    /* 圆角 */
+    --md-shape-small: 4px;
+    --md-shape-medium: 8px;
+    --md-shape-large: 16px;
+    --md-shape-extra-large: 28px;
+    
+    /* 动画时间 */
+    --md-transition-fast: 100ms;
+    --md-transition-medium: 200ms;
+    --md-transition-slow: 300ms;
+}
+
+/* 基础样式 */
+* {
+    -fx-font-family: var(--md-font-family);
+    -fx-text-fill: var(--md-on-surface);
+}
+
+/* 按钮基础样式 */
+.button {
+    -fx-background-color: var(--md-primary);
+    -fx-text-fill: var(--md-on-primary);
+    -fx-background-radius: var(--md-shape-small);
+    -fx-effect: var(--md-elevation-1);
+    -fx-padding: 12px 24px;
+    -fx-cursor: hand;
+    -fx-min-height: 40px;
+    -fx-min-width: 64px;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-transition: -fx-background-color var(--md-transition-medium),
+                    -fx-effect var(--md-transition-fast);
+}
+
+.button:hover {
+    -fx-background-color: derive(var(--md-primary), 10%);
+    -fx-effect: var(--md-elevation-2);
+}
+
+.button:pressed {
+    -fx-background-color: derive(var(--md-primary), -10%);
+    -fx-effect: var(--md-elevation-1);
+}
+
+.button:disabled {
+    -fx-opacity: 0.38;
+    -fx-cursor: default;
+}
+
+/* 文本按钮 */
+.text-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: var(--md-primary);
+    -fx-effect: none;
+    -fx-padding: 8px 12px;
+}
+
+.text-button:hover {
+    -fx-background-color: rgba(103, 80, 164, 0.08);
+}
+
+.text-button:pressed {
+    -fx-background-color: rgba(103, 80, 164, 0.12);
+}
+
+/* 输入框样式 */
+.text-field, .text-area {
+    -fx-background-color: var(--md-surface);
+    -fx-background-radius: var(--md-shape-small) var(--md-shape-small) 0 0;
+    -fx-border-color: var(--md-outline);
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 16px;
+    -fx-font-size: 16px;
+    -fx-transition: -fx-border-color var(--md-transition-medium);
+}
+
+.text-field:focused, .text-area:focused {
+    -fx-border-color: var(--md-primary);
+    -fx-border-width: 0 0 2 0;
+}
+
+.text-field:hover, .text-area:hover {
+    -fx-background-color: derive(var(--md-surface), -2%);
+}
+
+/* 下拉框样式 */
+.combo-box {
+    -fx-background-color: var(--md-surface);
+    -fx-border-color: var(--md-outline);
+    -fx-border-radius: var(--md-shape-small);
+    -fx-background-radius: var(--md-shape-small);
+    -fx-padding: 8px;
+    -fx-min-height: 40px;
+}
+
+.combo-box:focused {
+    -fx-border-color: var(--md-primary);
+    -fx-border-width: 2px;
+}
+
+.combo-box .list-cell {
+    -fx-padding: 8px 16px;
+    -fx-text-fill: var(--md-on-surface);
+}
+
+.combo-box .list-cell:hover {
+    -fx-background-color: var(--md-surface-variant);
+}
+
+/* 滑块样式 */
+.slider .track {
+    -fx-background-color: var(--md-surface-variant);
+    -fx-background-radius: 2px;
+}
+
+.slider .thumb {
+    -fx-background-color: var(--md-primary);
+    -fx-effect: var(--md-elevation-1);
+    -fx-background-radius: 50%;
+    -fx-pref-width: 20px;
+    -fx-pref-height: 20px;
+}
+
+.slider .thumb:hover {
+    -fx-effect: var(--md-elevation-2);
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+}
+
+/* 卡片样式 */
+.card {
+    -fx-background-color: var(--md-surface);
+    -fx-background-radius: var(--md-shape-medium);
+    -fx-effect: var(--md-elevation-1);
+    -fx-padding: 16px;
+    -fx-spacing: 8px;
+    -fx-transition: -fx-effect var(--md-transition-medium);
+}
+
+.card:hover {
+    -fx-effect: var(--md-elevation-2);
+}
+
+/* 标题样式 */
+.section-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: var(--md-on-surface);
+    -fx-padding: 16px 0;
+}
+
+/* 预设按钮样式 */
+.preset-button {
+    -fx-background-color: var(--md-surface-variant);
+    -fx-text-fill: var(--md-on-surface-variant);
+    -fx-background-radius: var(--md-shape-medium);
+    -fx-padding: 8px 16px;
+    -fx-cursor: hand;
+    -fx-transition: -fx-background-color var(--md-transition-medium);
+}
+
+.preset-button:hover {
+    -fx-background-color: derive(var(--md-surface-variant), -5%);
+    -fx-effect: var(--md-elevation-1);
+}
+
+.preset-button:pressed {
+    -fx-background-color: derive(var(--md-surface-variant), -10%);
+}
+
+/* 保存按钮特殊样式 */
+.save-button {
+    -fx-background-color: var(--md-primary);
+    -fx-text-fill: var(--md-on-primary);
+    -fx-font-weight: bold;
+    -fx-min-width: 120px;
+    -fx-min-height: 45px;
+}
+
+/* 滚动条样式 */
+.scroll-bar {
+    -fx-background-color: transparent;
+    -fx-padding: 0 4px;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: var(--md-surface-variant);
+    -fx-background-radius: 8px;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: derive(var(--md-surface-variant), -10%);
+}
+
+/* 工具提示样式 */
+.tooltip {
+    -fx-background-color: var(--md-surface-variant);
+    -fx-text-fill: var(--md-on-surface-variant);
+    -fx-background-radius: var(--md-shape-small);
+    -fx-padding: 8px 16px;
+    -fx-font-size: 12px;
+    -fx-effect: var(--md-elevation-2);
+}

@@ -15,7 +15,8 @@ public class Settings implements Serializable {
     private String backgroundImage;
     private String theme; // light, dark, custom
     private String minecraftPath;
-    
+    private String selectedVersion; // 添加用于存储所选版本的字段
+
     public Settings() {
         // 默认值
         this.javaPath = "";
@@ -80,5 +81,14 @@ public class Settings implements Serializable {
     
     public void setMinecraftPath(String minecraftPath) {
         this.minecraftPath = minecraftPath;
+    }
+
+    // 添加 setSelectedVersion 方法
+    public void setSelectedVersion(String selectedVersion) {
+        this.selectedVersion = selectedVersion;
+    }
+
+    public String getSelectedVersion() {
+        return selectedVersion; // 修改 getSelectedVersion 方法以返回存储的值
     }
 }

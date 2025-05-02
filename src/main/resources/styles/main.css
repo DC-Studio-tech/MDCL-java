@@ -1,19 +1,19 @@
 .login-panel {
-    -fx-background-color: linear-gradient(to bottom right, rgba(46, 52, 64, 0.8), #2E3440);
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.4), 20, 0, 0, 0);
+    -fx-background-color: linear-gradient(to bottom right, rgba(245, 245, 247, 0.9), #F5F5F7);
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 20, 0, 0, 0);
     -fx-background-radius: 15;
-    -fx-border-color: rgba(0, 255, 163, 0.3);
+    -fx-border-color: rgba(200, 200, 200, 0.5);
     -fx-border-radius: 15;
-    -fx-border-width: 1.5;
+    -fx-border-width: 1;
     -fx-padding: 25;
 }
 
 .title-label {
+    -fx-font-family: "San Francisco", "Helvetica Neue", Helvetica, Arial, sans-serif;
     -fx-font-size: 28px;
     -fx-font-weight: bold;
-    -fx-text-fill: #FFFFFF;
+    -fx-text-fill: #1D1D1F;
     -fx-padding: 0 0 25 0;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,255,163,0.5), 10, 0, 0, 0);
 }
 
 .input-field {
@@ -21,66 +21,69 @@
     -fx-pref-height: 40px;
     -fx-background-radius: 8;
     -fx-border-radius: 8;
-    -fx-background-color: rgba(46, 52, 64, 0.8);
-    -fx-border-color: #00FFA3;
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #D1D1D6;
     -fx-border-width: 1;
     -fx-padding: 8;
-    -fx-text-fill: #FFFFFF;
+    -fx-text-fill: #1D1D1F;
+    -fx-prompt-text-fill: #8A8A8E;
+    -fx-font-family: "San Francisco", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .login-button {
-    -fx-background-color: #00FFA3;
-    -fx-text-fill: #2E3440;
+    -fx-background-color: #5E5CE6; /* 紫色主调 */
+    -fx-text-fill: #FFFFFF;
     -fx-font-weight: bold;
     -fx-pref-height: 40px;
     -fx-background-radius: 8;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,255,163,0.4), 8, 0, 0, 0);
     -fx-cursor: hand;
-    -fx-transition: all 0.15s ease-in-out;
+    -fx-font-family: "San Francisco", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -fx-transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
 }
 
 .login-button:hover {
-    -fx-background-color: derive(#00FFA3, -10%);
-    -fx-effect: dropshadow(three-pass-box, rgba(0,255,163,0.6), 12, 0, 0, 0);
-    -fx-scale-x: 1.02;
-    -fx-scale-y: 1.02;
+    -fx-background-color: derive(#5E5CE6, -10%);
+    -fx-effect: dropshadow(three-pass-box, rgba(94, 92, 230, 0.4), 10, 0, 0, 0);
 }
 
 .login-button:pressed {
-    -fx-background-color: derive(#00FFA3, -20%);
-    -fx-scale-x: 0.98;
-    -fx-scale-y: 0.98;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,255,163,0.3), 4, 0, 0, 0);
+    -fx-background-color: derive(#5E5CE6, -20%);
+    -fx-scale-x: 1.02; /* 修改为放大 */
+    -fx-scale-y: 1.02; /* 修改为放大 */
+    -fx-effect: none;
 }
 
 .remember-checkbox {
-    -fx-text-fill: #FFFFFF;
+    -fx-text-fill: #1D1D1F;
+    -fx-font-family: "San Francisco", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .remember-checkbox .box {
-    -fx-background-color: rgba(46, 52, 64, 0.8);
-    -fx-border-color: #00FFA3;
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #D1D1D6;
 }
 
 .remember-checkbox:selected .box {
-    -fx-background-color: #00FFA3;
+    -fx-background-color: #5E5CE6; /* 紫色 */
+    -fx-border-color: #5E5CE6; /* 统一边框颜色 */
 }
 
 .status-label {
-    -fx-text-fill: #FF004D;
+    -fx-text-fill: #FF3B30; /* Apple 红色 */
     -fx-font-size: 13px;
-    -fx-effect: dropshadow(three-pass-box, rgba(255,0,77,0.3), 5, 0, 0, 0);
+    -fx-font-family: "San Francisco", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .hyperlink {
-    -fx-text-fill: #00FFA3;
+    -fx-text-fill: #007AFF; /* Apple 蓝色 */
     -fx-border-color: transparent;
     -fx-padding: 4 0 0 0;
+    -fx-font-family: "San Francisco", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .hyperlink:hover {
-    -fx-text-fill: derive(#00FFA3, -10%);
-    -fx-effect: dropshadow(three-pass-box, rgba(0,255,163,0.4), 5, 0, 0, 0);
+    -fx-text-fill: derive(#007AFF, -10%);
+    -fx-underline: true;
 }
 
 .preset-button {
@@ -95,28 +98,25 @@
 }
 
 .preset-button {
-    -fx-background-color: #E3F2FD;
-    -fx-text-fill: #6d36f7;
+    -fx-background-color: rgba(94, 92, 230, 0.1); /* 淡紫色背景 */
+    -fx-text-fill: #5E5CE6; /* 紫色 */
     -fx-padding: 8 12;
     -fx-background-radius: 15;
     -fx-border-radius: 15;
-    -fx-border-color: #bb9fe0;
-    -fx-border-width: 1;
+    -fx-border-color: transparent;
     -fx-cursor: hand;
-    -fx-transition: all 0.2s ease-in-out;
+    -fx-font-family: "San Francisco", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -fx-transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out, text-fill 0.2s ease-in-out;
 }
 
 .preset-button:hover {
-    -fx-background-color: #BBDEFB;
-    -fx-border-color: #90CAF9;
-    -fx-scale-x: 1.05;
-    -fx-scale-y: 1.05;
+    -fx-background-color: rgba(94, 92, 230, 0.15); /* 紫色悬停效果 */
 }
 
 .preset-button:pressed {
-    -fx-background-color: #7601fd;
-    -fx-scale-x: 0.95;
-    -fx-scale-y: 0.95;
+    -fx-background-color: rgba(94, 92, 230, 0.25);
+    -fx-scale-x: 1.02; /* 修改为放大 */
+    -fx-scale-y: 1.02; /* 修改为放大 */
 }
 
 .preset-button:disabled {
@@ -128,49 +128,61 @@
 
 /* 主界面样式 */
 .main-view {
-    -fx-background-image: url('../images/background.jpg');
-    -fx-background-size: cover;
-    -fx-background-position: center;
-    -fx-background-repeat: no-repeat;
-}
-    -fx-background-color: linear-gradient(to bottom right, #7D00FF, #2E3440);
+    /* 保留背景图片设置，如果需要的话 */
+    /* -fx-background-image: url('../images/background.jpg'); */
+    /* -fx-background-size: cover; */
+    /* -fx-background-position: center; */
+    /* -fx-background-repeat: no-repeat; */
+    
+    /* 使用 Apple 风格的浅灰色背景 */
+    -fx-background-color: #F5F5F7;
     -fx-padding: 0;
 }
 
 /* 导航栏样式 */
 .navigation-bar {
-    -fx-background-color: rgba(46, 52, 64, 0.8);
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.4), 10, 0, 0, 0);
+    -fx-background-color: rgba(245, 245, 247, 0.85); /* 浅灰色半透明 */
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #D1D1D6;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.05), 10, 0, 0, 0);
 }
 
 .section-title {
-    -fx-text-fill: #00FFA3;
+    -fx-text-fill: #6E6E73;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
-    -fx-padding: 10 0 5 10;
+    -fx-padding: 15 0 5 15;
+    -fx-font-family: "San Francisco", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .nav-button {
     -fx-background-color: transparent;
-    -fx-text-fill: #FFFFFF;
-    -fx-padding: 8 15;
+    -fx-text-fill: #5E5CE6; /* 紫色 */
+    -fx-padding: 10 15;
     -fx-alignment: CENTER_LEFT;
     -fx-cursor: hand;
+    -fx-font-family: "San Francisco", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -fx-font-size: 15px;
+    -fx-background-radius: 5;
+    -fx-transition: background-color 0.2s ease-in-out; /* 移除 text-fill 过渡 */
 }
 
 .nav-button:hover {
-    -fx-background-color: rgba(0, 255, 163, 0.2);
+    -fx-background-color: rgba(94, 92, 230, 0.1); /* 紫色悬停效果 */
+    -fx-text-fill: #5E5CE6; /* 设置悬停文本颜色为紫色，期望图标继承 */
 }
 
+/* 图标颜色由 .nav-button .ikonli-font-icon 规则处理 */
+
 .nav-button:pressed {
-    -fx-background-color: rgba(0, 255, 163, 0.3);
+    -fx-background-color: rgba(94, 92, 230, 0.2);
 }
 
 .header-title {
     -fx-font-size: 24px;
     -fx-font-weight: bold;
-    -fx-text-fill: #00FFA3;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,255,163,0.5), 10, 0, 0, 0);
+    -fx-text-fill: #1D1D1F;
+    -fx-font-family: "San Francisco", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 /* 标签页样式 */
@@ -183,103 +195,117 @@
 }
 
 .tab-pane .tab {
-    -fx-background-color: rgba(125, 0, 255, 0.3);
+    -fx-background-color: rgba(94, 92, 230, 0.08); /* 更淡的紫色背景 */
     -fx-background-radius: 5 5 0 0;
     -fx-padding: 8 15;
+    -fx-border-color: transparent;
+    -fx-transition: background-color 0.2s ease-in-out;
 }
 
 .tab-pane .tab:selected {
-    -fx-background-color: rgba(0, 255, 163, 0.3);
-    -fx-effect: dropshadow(three-pass-box, rgba(0,255,163,0.4), 8, 0, 0, 0);
+    -fx-background-color: #F5F5F7; /* 与主背景色一致 */
+    -fx-border-color: #D1D1D6 #D1D1D6 transparent #D1D1D6;
+    -fx-border-width: 1 1 0 1;
 }
 
 .tab-pane .tab:hover {
-    -fx-background-color: rgba(125, 0, 255, 0.5);
+    -fx-background-color: rgba(94, 92, 230, 0.15); /* 紫色悬停效果 */
 }
 
 .tab-pane .tab-label {
-    -fx-text-fill: #FFFFFF;
-    -fx-font-weight: bold;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 3, 0, 0, 0);
+    -fx-text-fill: #1D1D1F; /* 调整为深色以提高对比度 */
+    -fx-font-weight: normal; /* 恢复默认粗细 */
+    -fx-font-family: "San Francisco", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .tab-pane .tab:selected .tab-label {
-    -fx-text-fill: #FFFFFF;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,255,163,0.5), 5, 0, 0, 0);
+    -fx-text-fill: #5E5CE6; /* 选中时保持紫色 */
+    -fx-font-weight: bold; /* 选中时加粗 */
+    -fx-effect: none; /* 移除阴影 */
 }
 
 /* 标签页内容区域样式 */
 .tab-pane .tab-content-area {
-    -fx-background-color: rgba(46, 52, 64, 0.3);
+    -fx-background-color: #F5F5F7; /* 与主背景色一致 */
     -fx-background-radius: 0 0 5 5;
     -fx-padding: 15;
+    -fx-border-color: #D1D1D6;
+    -fx-border-width: 0 1 1 1;
+}
+
+.multiplayer-view {
+    -fx-background-color: #f4f4f4;
+}
+
+.multiplayer-view .list-cell {
+    -fx-padding: 10px;
+    -fx-background-color: white;
+    -fx-border-color: #ddd;
 }
 
 /* 欢迎文本样式 */
 .welcome-label {
-    -fx-text-fill: #FFFFFF;
+    -fx-text-fill: #1D1D1F; /* 调整为深色以提高对比度 */
     -fx-font-size: 24px;
     -fx-font-weight: bold;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,255,163,0.5), 8, 0, 0, 0);
+    -fx-font-family: "San Francisco", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 /* 用户信息区域样式 */
 .user-info-label {
-    -fx-text-fill: #FFFFFF;
+    -fx-text-fill: #6E6E73; /* 使用次要深灰色 */
     -fx-font-size: 14px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 3, 0, 0, 0);
+    -fx-font-family: "San Francisco", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 /* 通用标签样式 */
 .label {
-    -fx-text-fill: #FFFFFF;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 3, 0, 0, 0);
+    -fx-text-fill: #1D1D1F; /* 调整为深色以提高对比度 */
+    -fx-effect: none; /* 移除阴影 */
+    -fx-font-family: "San Francisco", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 /* 滑块样式 */
 .slider .track {
-    -fx-background-color: #E0E0E0;
+    -fx-background-color: #E5E5EA;
     -fx-background-radius: 2;
 }
 
 .slider .thumb {
-    -fx-background-color: #2196F3;
+    -fx-background-color: #5E5CE6; /* 紫色 */
     -fx-background-radius: 50%;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 3, 0, 0, 0);
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 3, 0, 0, 0);
 }
 
 .slider .thumb:hover {
-    -fx-background-color: #1976D2;
+    -fx-background-color: derive(#5E5CE6, -10%);
 }
 
 /* 文本框样式 */
 .text-field {
-    -fx-background-color: #2E3440;
+    -fx-background-color: #FFFFFF;
     -fx-background-radius: 5;
     -fx-border-radius: 5;
-    -fx-border-color: #00FFA3;
+    -fx-border-color: rgba(94, 92, 230, 0.4); /* 淡紫色边框 */
     -fx-border-width: 1;
     -fx-padding: 5 10;
-    -fx-text-fill: #FFFFFF;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,255,163,0.2), 3, 0, 0, 0);
+    -fx-text-fill: #1D1D1F;
+    -fx-font-family: "San Francisco", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -fx-transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* 添加过渡效果 */
 }
 
 .text-field:focused {
-    -fx-border-color: #00FFA3;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,255,163,0.4), 5, 0, 0, 0);
+    -fx-border-color: #5E5CE6; /* 紫色 */
+    -fx-effect: dropshadow(three-pass-box, rgba(94, 92, 230, 0.3), 5, 0, 0, 0);
 }
 
 .button {
     -fx-padding: 8 12 8 12;
 }
 
-.button .ikonli-font-icon {
-    -fx-icon-color: -fx-text-fill;
-}
 
-.button:hover .ikonli-font-icon {
-    -fx-icon-color: white;
-}
+
+
 
 .nav-button {
     -fx-padding: 8 16 8 16;
@@ -289,6 +315,42 @@
 .nav-button .fontawesome-icon {
     -fx-fill: -fx-text-fill;
     -fx-padding: 0 8 0 0;
+}
+
+/* 确保导航按钮悬停时图标颜色保持可见 (提高特异性) */
+.nav-button.nav-button:hover .ikonli-font-icon,
+.nav-button.nav-button:hover .fontawesome-icon {
+    -fx-fill: #5E5CE6 !important; /* 强制图标填充色为紫色 */
+}
+
+
+
+/* 启动游戏按钮样式 */
+.launch-button {
+    -fx-background-color: #5E5CE6; /* 紫色主调 */
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-padding: 10 15; /* 调整内边距以适应图标 */
+    -fx-alignment: CENTER; /* 确保内容居中 */
+    -fx-transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+}
+
+.launch-button:hover {
+    -fx-background-color: derive(#5E5CE6, -10%);
+    -fx-effect: dropshadow(three-pass-box, rgba(94, 92, 230, 0.4), 10, 0, 0, 0);
+}
+
+.launch-button:pressed {
+    -fx-background-color: derive(#5E5CE6, -20%);
+    -fx-scale-x: 1.02; /* 修改为放大 */
+    -fx-scale-y: 1.02; /* 修改为放大 */
+    -fx-effect: none;
+}
+
+.launch-button .ikonli-font-icon,
+.launch-button .fontawesome-icon {
+    -fx-fill: #FFFFFF; /* 确保图标也是白色 */
 }
 
 /* 深色主题 */
@@ -317,19 +379,24 @@
 }
 
 .download-button {
-    -fx-background-color: #00FFA3;
-    -fx-text-fill: #2E3440;
+    -fx-background-color: #5E5CE6; /* 紫色 */
+    -fx-text-fill: #FFFFFF;
     -fx-font-weight: bold;
     -fx-padding: 8 15;
     -fx-background-radius: 5;
     -fx-cursor: hand;
+    -fx-font-family: "San Francisco", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -fx-transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
 }
 
 .download-button:hover {
-    -fx-background-color: derive(#00FFA3, -10%);
-    -fx-effect: dropshadow(three-pass-box, rgba(0,255,163,0.4), 8, 0, 0, 0);
+    -fx-background-color: derive(#5E5CE6, -10%);
+    -fx-effect: dropshadow(three-pass-box, rgba(94, 92, 230, 0.4), 8, 0, 0, 0);
 }
 
 .download-button:pressed {
-    -fx-background-color: derive(#00FFA3, -20%);
+    -fx-background-color: derive(#5E5CE6, -20%);
+    -fx-scale-x: 1.02; /* 修改为放大 */
+    -fx-scale-y: 1.02; /* 修改为放大 */
+    -fx-effect: none;
 }

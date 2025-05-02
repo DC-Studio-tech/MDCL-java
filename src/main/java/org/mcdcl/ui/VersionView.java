@@ -66,6 +66,23 @@ public class VersionView extends VBox {
         selectButton.setPrefWidth(100);
         selectButton.setPrefHeight(40);
         selectButton.getStyleClass().add("primary-button");
+
+        // 添加选择版本按钮的事件处理
+        selectButton.setOnAction(e -> {
+            String selectedVersion = versionList.getSelectionModel().getSelectedItem();
+            if (selectedVersion != null && !selectedVersion.isEmpty()) {
+                try {
+                    Settings settings = SettingsManager.loadSettings();
+                    settings.setSelectedVersion(selectedVersion);
+                    SettingsManager.saveSettings(settings);
+                    showSuccessAlert("版本 " + selectedVersion + " 已选择并保存");
+                } catch (IOException ex) {
+                    showErrorAlert("保存设置失败: " + ex.getMessage());
+                }
+            } else {
+                showErrorAlert("请先从列表中选择一个版本");
+            }
+        });
         
         selectButtonBox.getChildren().add(selectButton);
         listAndSelectBox.getChildren().addAll(versionList, selectButtonBox);

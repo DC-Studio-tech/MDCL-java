@@ -15,6 +15,14 @@
         </configuration>
       </plugin>
       <plugin>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-maven-plugin</artifactId>
+        <version>0.0.8</version>
+        <configuration>
+          <mainClass>org.mcdcl.Main</mainClass>
+        </configuration>
+      </plugin>
+      <plugin>
         <artifactId>maven-shade-plugin</artifactId>
         <version>3.5.0</version>
         <executions>
@@ -47,37 +55,7 @@
                     <Add-Exports>javafx.graphics/com.sun.javafx.css=ALL-UNNAMED</Add-Exports>
                   </manifestEntries>
                 </transformer>
-                <transformer>
-                  <resource>META-INF/services/javafx.platform.Capabilities</resource>
-                </transformer>
                 <transformer />
-                <transformer>
-                  <resource>module-info.class</resource>
-                </transformer>
-                <transformer>
-                  <manifestEntries>
-                    <Main-Class>org.mcdcl.Main</Main-Class>
-                    <Class-Path>.</Class-Path>
-                    <Add-Opens>java.base/java.lang=ALL-UNNAMED</Add-Opens>
-                    <Add-Opens>java.base/java.io=ALL-UNNAMED</Add-Opens>
-                    <Add-Opens>javafx.graphics/com.sun.javafx.application=ALL-UNNAMED</Add-Opens>
-                    <Add-Exports>javafx.graphics/com.sun.javafx.application=ALL-UNNAMED</Add-Exports>
-                    <Add-Exports>javafx.base/com.sun.javafx.runtime=ALL-UNNAMED</Add-Exports>
-                    <Add-Opens>javafx.graphics/com.sun.javafx.tk=ALL-UNNAMED</Add-Opens>
-                    <Add-Opens>javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED</Add-Opens>
-                    <Add-Exports>javafx.graphics/com.sun.glass.ui=ALL-UNNAMED</Add-Exports>
-                    <Add-Exports>javafx.graphics/com.sun.javafx.tk.quantum=ALL-UNNAMED</Add-Exports>
-                    <Add-Opens>javafx.base/com.sun.javafx=ALL-UNNAMED</Add-Opens>
-                    <Add-Opens>javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED</Add-Opens>
-                    <Add-Opens>javafx.media/com.sun.media.jfxmedia=ALL-UNNAMED</Add-Opens>
-                    <Add-Opens>javafx.web/com.sun.webkit=ALL-UNNAMED</Add-Opens>
-                    <Add-Exports>javafx.base/com.sun.javafx.logging=ALL-UNNAMED</Add-Exports>
-                    <Add-Exports>javafx.graphics/com.sun.javafx.css=ALL-UNNAMED</Add-Exports>
-                  </manifestEntries>
-                </transformer>
-                <transformer>
-                  <resource>META-INF/services/javafx.platform.Capabilities</resource>
-                </transformer>
               </transformers>
               <filters>
                 <filter>
@@ -93,37 +71,54 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.6.0</version>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+          <archive>
+            <manifest>
+              <mainClass>org.mcdcl.Main</mainClass>
+            </manifest>
+            <manifestEntries>
+              <Class-Path>.</Class-Path>
+              <Add-Opens>java.base/java.lang=ALL-UNNAMED</Add-Opens>
+              <Add-Opens>java.base/java.io=ALL-UNNAMED</Add-Opens>
+              <Add-Opens>javafx.graphics/com.sun.javafx.application=ALL-UNNAMED</Add-Opens>
+              <Add-Exports>javafx.graphics/com.sun.javafx.application=ALL-UNNAMED</Add-Exports>
+              <Add-Exports>javafx.base/com.sun.javafx.runtime=ALL-UNNAMED</Add-Exports>
+              <Add-Opens>javafx.graphics/com.sun.javafx.tk=ALL-UNNAMED</Add-Opens>
+              <Add-Opens>javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED</Add-Opens>
+              <Add-Exports>javafx.graphics/com.sun.glass.ui=ALL-UNNAMED</Add-Exports>
+              <Add-Exports>javafx.graphics/com.sun.javafx.tk.quantum=ALL-UNNAMED</Add-Exports>
+              <Add-Opens>javafx.base/com.sun.javafx=ALL-UNNAMED</Add-Opens>
+              <Add-Opens>javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED</Add-Opens>
+              <Add-Opens>javafx.media/com.sun.media.jfxmedia=ALL-UNNAMED</Add-Opens>
+              <Add-Opens>javafx.web/com.sun.webkit=ALL-UNNAMED</Add-Opens>
+              <Add-Exports>javafx.base/com.sun.javafx.logging=ALL-UNNAMED</Add-Exports>
+              <Add-Exports>javafx.graphics/com.sun.javafx.css=ALL-UNNAMED</Add-Exports>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
-  <profiles>
-    <profile>
-      <id>jpackage</id>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-jpackage-plugin</artifactId>
-            <version>3.2.0</version>
-            <configuration>
-              <name>MDCL</name>
-              <vendor>org.mcdcl</vendor>
-              <mainClass>org.mcdcl.Main</mainClass>
-              <dest>target/jpackage</dest>
-              <appVersion>1.0</appVersion>
-              <linuxShortcut>true</linuxShortcut>
-              <winShortcut>true</winShortcut>
-              <macPackageName>MDCL</macPackageName>
-              <macPackageIdentifier>org.mcdcl.MDCL</macPackageIdentifier>
-              <macSigningKeyUser>Developer ID Application</macSigningKeyUser>
-              <icon>src/main/resources/icon.icns</icon>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
   <properties>
     <maven.compiler.target>21</maven.compiler.target>
     <maven.compiler.source>21</maven.compiler.source>
+    <gluonfx.target>host</gluonfx.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <javafx.version>21</javafx.version>
   </properties>
 </project>

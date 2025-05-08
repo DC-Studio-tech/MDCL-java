@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.mcdcl.config.UserPreferences;
+import org.mcdcl.ui.ProgressDialog;
 import org.to2mbn.jmccc.auth.OfflineAuthenticator;
 import org.to2mbn.jmccc.launch.LaunchException;
 import org.to2mbn.jmccc.launch.Launcher;
@@ -52,42 +53,67 @@ import java.util.ArrayList;
 
     // Overloaded launchGame method to accept server IP
     public void launchGame(String versionName, String serverIp) throws LaunchException, IOException {
-         System.out.println("开始启动游戏版本: " + versionName);
-         // 检查Java路径是否有效
-         if (javaPath == null || javaPath.isEmpty()) {
-             throw new LaunchException("Java路径未设置，请在设置中选择有效的Java路径");
-         }
+        // 创建并显示进度弹窗
+        ProgressDialog progressDialog = new ProgressDialog();
+        progressDialog.showProgress();
+        
+        try {
+            // 检测Java版本
+            progressDialog.updateStatus("检测Java版本...");
+            progressDialog.updateProgress(0.1);
+            if (progressDialog.isCancelled()) {
+                return;
+            }
+            System.out.println("开始启动游戏版本: " + versionName);
+            if (javaPath == null || javaPath.isEmpty()) {
+                throw new LaunchException("Java路径未设置，请在设置中选择有效的Java路径");
+            }
          
-         File javaFile = new File(javaPath);
-         if (!javaFile.exists() || !javaFile.isFile() || !javaFile.canExecute()) {
-             throw new LaunchException("Java路径无效或不可执行: " + javaPath);
-         }
+            File javaFile = new File(javaPath);
+            if (!javaFile.exists() || !javaFile.isFile() || !javaFile.canExecute()) {
+                throw new LaunchException("Java路径无效或不可执行: " + javaPath);
+            }
+            
+            // 检查游戏依赖
+            progressDialog.updateStatus("检查游戏依赖...");
+            progressDialog.updateProgress(0.3);
+            if (progressDialog.isCancelled()) {
+                return;
+            }
+            if (!minecraftDir.getRoot().exists() || !minecraftDir.getRoot().isDirectory()) {
+                throw new LaunchException("Minecraft目录不存在或不是有效目录: " + minecraftDir.getRoot().getAbsolutePath());
+            }
          
-         // 检查Minecraft目录是否存在
-         if (!minecraftDir.getRoot().exists() || !minecraftDir.getRoot().isDirectory()) {
-             throw new LaunchException("Minecraft目录不存在或不是有效目录: " + minecraftDir.getRoot().getAbsolutePath());
-         }
+            // 检查版本目录是否存在
+            progressDialog.updateStatus("检查游戏版本...");
+            progressDialog.updateProgress(0.5);
+            if (progressDialog.isCancelled()) {
+                return;
+            }
+            File versionDir = new File(minecraftDir.getVersions(), versionName);
+            if (!versionDir.exists() || !versionDir.isDirectory()) {
+                throw new LaunchException("找不到版本: " + versionName + "，请确认该版本已安装");
+            }
+            
+            // 使用版本名称获取版本对象
+            Version version = org.to2mbn.jmccc.version.parsing.Versions.resolveVersion(minecraftDir, versionName);
+            if (version == null) {
+                throw new LaunchException("找不到版本: " + versionName + "，版本文件可能已损坏");
+            }
          
-         // 检查版本目录是否存在
-         File versionDir = new File(minecraftDir.getVersions(), versionName);
-         if (!versionDir.exists() || !versionDir.isDirectory()) {
-             throw new LaunchException("找不到版本: " + versionName + "，请确认该版本已安装");
-         }
-         
-         // 使用版本名称获取版本对象
-         Version version = org.to2mbn.jmccc.version.parsing.Versions.resolveVersion(minecraftDir, versionName);
-         if (version == null) {
-             throw new LaunchException("找不到版本: " + versionName + "，版本文件可能已损坏");
-         }
-         
-         // 获取当前选定的账号，如果没有则使用默认值
-         String username = UserPreferences.getCurrentAccount();
-         if (username.isEmpty()) {
-             username = "Player";
-         }
-         
-         // 创建 LaunchOption，使用离线模式认证器
-         LaunchOption option = new LaunchOption(version, new OfflineAuthenticator(username), minecraftDir);
+            // 处理账号登录
+            progressDialog.updateStatus("处理账号登录...");
+            progressDialog.updateProgress(0.7);
+            if (progressDialog.isCancelled()) {
+                return;
+            }
+            String username = UserPreferences.getCurrentAccount();
+            if (username.isEmpty()) {
+                username = "Player";
+            }
+            
+            // 创建 LaunchOption，使用离线模式认证器
+            LaunchOption option = new LaunchOption(version, new OfflineAuthenticator(username), minecraftDir);
          
          // 设置Java路径
          option.setJavaEnvironment(new org.to2mbn.jmccc.option.JavaEnvironment(new File(javaPath)));
@@ -124,13 +150,15 @@ import java.util.ArrayList;
             option.extraMinecraftArguments().add(arg);
         }
          
-         // 启动游戏
-         try {
-             // 启用调试模式，打印启动命令行
-             this.launcher = LauncherBuilder.create().printDebugCommandline(true).build();
-             
-             // 添加进程监听器来捕获游戏输出
-             gameProcess = launcher.launch(option, new org.to2mbn.jmccc.launch.ProcessListener() {
+            // 准备启动游戏
+            progressDialog.updateStatus("准备启动游戏...");
+            progressDialog.updateProgress(0.9);
+            
+            // 启用调试模式，打印启动命令行
+            this.launcher = LauncherBuilder.create().printDebugCommandline(true).build();
+            
+            // 添加进程监听器来捕获游戏输出
+            gameProcess = launcher.launch(option, new org.to2mbn.jmccc.launch.ProcessListener() {
                  @Override
                  public void onLog(String log) {
                      System.out.println("[Minecraft] " + log);
@@ -152,12 +180,26 @@ import java.util.ArrayList;
                  throw new LaunchException("游戏进程启动失败，无法获取进程句柄");
              }
              
-             System.out.println("游戏进程已启动，PID: " + gameProcess.pid());
-         } catch (Exception e) {
-             System.err.println("启动游戏时发生异常: " + e.getMessage());
-             e.printStackTrace();
-             throw new LaunchException("启动游戏失败: " + e.getMessage(), e);
-         }
+            System.out.println("游戏进程已启动，PID: " + gameProcess.pid());
+            
+            // 更新进度为完成
+            progressDialog.updateStatus("游戏启动完成！");
+            progressDialog.updateProgress(1.0);
+            Thread.sleep(1000); // 显示完成状态1秒
+            progressDialog.close();
+            
+        } catch (Exception e) {
+            System.err.println("启动游戏时发生异常: " + e.getMessage());
+            e.printStackTrace();
+            progressDialog.close();
+            throw new LaunchException("启动游戏失败: " + e.getMessage(), e);
+        }
+        
+        // 检查是否被用户取消
+        if (progressDialog.isCancelled()) {
+            stopGame();
+            throw new LaunchException("启动已被用户取消");
+        }
      }
  
      // 关闭游戏进程的方法

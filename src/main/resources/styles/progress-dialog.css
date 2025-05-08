@@ -1,0 +1,45 @@
+.progress-dialog {
+    -fx-background-color: #2E3440;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0, 0, 0);
+}
+
+.dialog-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ECEFF4;
+}
+
+.status-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #D8DEE9;
+}
+
+.progress-bar {
+    -fx-accent: #88C0D0;
+}
+
+.progress-bar .track {
+    -fx-background-color: #3B4252;
+    -fx-background-radius: 5;
+}
+
+.progress-bar .bar {
+    -fx-background-radius: 5;
+}
+
+.cancel-button {
+    -fx-background-color: #4C566A;
+    -fx-text-fill: #ECEFF4;
+    -fx-background-radius: 5;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.cancel-button:hover {
+    -fx-background-color: #5E81AC;
+}
+
+.cancel-button:pressed {
+    -fx-background-color: #81A1C1;
+}

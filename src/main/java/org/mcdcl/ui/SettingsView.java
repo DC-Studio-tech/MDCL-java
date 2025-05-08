@@ -2,14 +2,22 @@ package org.mcdcl.ui;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.net.URL;
+import java.nio.file.Files;
 import java.util.List;
 
 import org.mcdcl.util.JavaFinder;
 import org.mcdcl.util.Settings;
 import org.mcdcl.util.SettingsManager;
 
+import com.google.gson.GsonBuilder;
+
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -17,14 +25,72 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 public class SettingsView extends ScrollPane {
+    // 通用UI组件创建方法
+    private Label createLabel(String text, String styleClass) {
+        Label label = new Label(text);
+        if (styleClass != null) {
+            label.getStyleClass().add(styleClass);
+        }
+        return label;
+    }
+
+    private TextField createTextField(String promptText, String tooltip, double prefWidth) {
+        TextField textField = new TextField();
+        textField.setPromptText(promptText);
+        if (tooltip != null) {
+            textField.setTooltip(new Tooltip(tooltip));
+        }
+        textField.setPrefWidth(prefWidth);
+        return textField;
+    }
+
+    private ComboBox<String> createComboBox(String promptText, double prefWidth, List<String> items) {
+        ComboBox<String> comboBox = new ComboBox<>();
+        comboBox.setPromptText(promptText);
+        comboBox.setPrefWidth(prefWidth);
+        if (items != null) {
+            comboBox.getItems().addAll(items);
+        }
+        return comboBox;
+    }
+
+    private Button createButton(String text, String styleClass) {
+        Button button = new Button(text);
+        if (styleClass != null) {
+            button.getStyleClass().add(styleClass);
+        }
+        return button;
+    }
+
+    private FlowPane createFlowPane(double hgap, double vgap, Insets padding) {
+        FlowPane flowPane = new FlowPane();
+        flowPane.setHgap(hgap);
+        flowPane.setVgap(vgap);
+        if (padding != null) {
+            flowPane.setPadding(padding);
+        }
+        return flowPane;
+    }
+
+    private void showAlert(String title, String content) {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+
     private VBox contentBox;
     private ComboBox<String> javaPathComboBox;
     private Button chooseJavaButton;
@@ -33,6 +99,7 @@ public class SettingsView extends ScrollPane {
     private TextField jvmArgsField;
     private TextField gameArgsField;
     private ComboBox<String> themeComboBox;
+    private ComboBox<String> navigationPositionComboBox; // 导航栏位置选择
     private TextField minecraftPathField;
     private Button chooseMinecraftPathButton;
     private Button saveButton;
@@ -41,6 +108,12 @@ public class SettingsView extends ScrollPane {
     private TextField backgroundPathField;  // 添加背景图片路径字段
 
     public SettingsView() {
+        initializeLayout();
+        Settings savedSettings = loadSavedSettings();
+        initializeComponents(savedSettings);
+    }
+
+    private void initializeLayout() {
         contentBox = new VBox();
         contentBox.setSpacing(15);
         contentBox.setPadding(new Insets(20));
@@ -50,20 +123,22 @@ public class SettingsView extends ScrollPane {
         setFitToWidth(true);
         setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
         setHbarPolicy(ScrollBarPolicy.NEVER);
+    }
 
-        // 标题
-        Label titleLabel = new Label("常规设置");
-        titleLabel.getStyleClass().add("section-title");
-        
-        // 尝试加载已保存的设置
+    private Settings loadSavedSettings() {
         Settings savedSettings = null;
         try {
             savedSettings = SettingsManager.loadSettings();
         } catch (IOException e) {
             System.err.println("无法加载设置: " + e.getMessage());
-            // 加载失败时使用默认设置
             savedSettings = new Settings();
         }
+        return savedSettings;
+    }
+
+    private void initializeComponents(Settings savedSettings) {
+        // 标题
+        Label titleLabel = createLabel("常规设置", "section-title");
 
         // Java路径设置
         Label javaPathLabel = new Label("Java路径:");
@@ -182,6 +257,81 @@ public class SettingsView extends ScrollPane {
         themeComboBox.getItems().addAll("默认主题", "深色主题", "浅色主题", "自定义主题");
         themeComboBox.setValue(savedSettings.getTheme());
         themeComboBox.setPrefWidth(300);
+
+        // 将所有组件添加到contentBox - 第一次添加
+        contentBox.getChildren().clear(); // 清除之前可能存在的组件
+        contentBox.getChildren().addAll(
+            titleLabel,
+            javaPathLabel, javaPathBox,
+            maxMemoryLabel, memoryBox,
+            jvmArgsLabel, jvmArgsField, jvmPresetPane,
+            gameArgsLabel, gameArgsField, gamePresetPane,
+            themeLabel, themeComboBox
+        );
+
+        // 导航栏位置设置
+        Label navigationPositionLabel = new Label("导航栏位置:");
+        navigationPositionLabel.getStyleClass().add("setting-label");
+        
+        HBox navigationPositionBox = new HBox(10);
+        navigationPositionBox.setAlignment(Pos.CENTER_LEFT);
+        
+        navigationPositionComboBox = new ComboBox<>();
+        navigationPositionComboBox.getItems().addAll("左侧", "顶部", "底部");
+        navigationPositionComboBox.getStyleClass().add("setting-combo-box");
+        navigationPositionComboBox.setPrefWidth(300);
+        navigationPositionComboBox.setTooltip(new Tooltip("选择导航栏的显示位置"));
+        
+        String currentPosition = savedSettings.getNavigationPosition();
+        String displayPosition = switch(currentPosition) {
+            case "left" -> "左侧";
+            case "top" -> "顶部";
+            case "bottom" -> "底部";
+            default -> "左侧";
+        };
+        navigationPositionComboBox.setValue(displayPosition);
+        
+        Button applyPositionButton = new Button("应用");
+        applyPositionButton.getStyleClass().addAll("apply-button", "small-button");
+        applyPositionButton.setOnAction(event -> {
+            String selectedPosition = navigationPositionComboBox.getValue();
+            String positionValue = switch(selectedPosition) {
+                case "左侧" -> "left";
+                case "顶部" -> "top";
+                case "底部" -> "bottom";
+                default -> "left";
+            };
+            try {
+                Settings settings = SettingsManager.loadSettings();
+                settings.setNavigationPosition(positionValue);
+                SettingsManager.saveSettings(settings);
+                
+                Alert alert = new Alert(AlertType.CONFIRMATION);
+                alert.setTitle("设置已保存");
+                alert.setHeaderText("导航栏位置已更改");
+                alert.setContentText("需要重启启动器才能应用更改，是否立即重启？");
+                
+                alert.getButtonTypes().setAll(
+                    javafx.scene.control.ButtonType.YES,
+                    javafx.scene.control.ButtonType.NO
+                );
+                
+                alert.showAndWait().ifPresent(buttonType -> {
+                    if (buttonType == javafx.scene.control.ButtonType.YES) {
+                        // 重启应用
+                        Platform.runLater(() -> {
+                            getScene().getWindow().hide();
+                            // 这里可以添加重启应用的逻辑
+                            Platform.exit();
+                        });
+                    }
+                });
+            } catch (IOException e) {
+                showErrorAlert("保存设置失败: " + e.getMessage());
+            }
+        });
+        
+        navigationPositionBox.getChildren().addAll(navigationPositionComboBox, applyPositionButton);
         
         // 样式表设置
         Label styleLabel = new Label("界面样式:");
@@ -270,23 +420,175 @@ public class SettingsView extends ScrollPane {
         saveButton.getStyleClass().add("save-button");
         saveButton.setMaxWidth(200);
 
-        // 添加所有组件到布局
+        // 添加自定义主题按钮
+        customThemeButton = new Button("导入自定义主题");
+        customThemeButton.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("选择CSS主题文件");
+            fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("CSS文件", "*.css")
+            );
+            File file = fileChooser.showOpenDialog(getScene().getWindow());
+            if (file != null) {
+                try {
+                    // 复制CSS文件到主题目录
+                    File themesDir = new File("themes");
+                    if (!themesDir.exists()) {
+                        themesDir.mkdir();
+                    }
+                    java.nio.file.Files.copy(
+                        file.toPath(),
+                        new File(themesDir, file.getName()).toPath(),
+                        java.nio.file.StandardCopyOption.REPLACE_EXISTING
+                    );
+                    // 应用新主题
+                    String cssUrl = file.toURI().toURL().toExternalForm();
+                    getScene().getStylesheets().clear();
+                    getScene().getStylesheets().add(cssUrl);
+                    showSuccessAlert("自定义主题已导入");
+                } catch (Exception ex) {
+                    showErrorAlert("导入主题失败: " + ex.getMessage());
+                }
+            }
+        });
+
+        // 添加备份和恢复按钮
+        HBox backupBox = new HBox(10);
+        backupBox.setAlignment(Pos.CENTER);
+        
+        backupButton = new Button("备份设置");
+        backupButton.setOnAction(e -> {
+            try {
+                File backupDir = new File("backups");
+                if (!backupDir.exists()) {
+                    backupDir.mkdir();
+                }
+                String timestamp = new java.text.SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
+                File backupFile = new File(backupDir, "settings_" + timestamp + ".json");
+                Settings settings = SettingsManager.loadSettings();
+                try (Writer writer = Files.newBufferedWriter(backupFile.toPath())) {
+                    new GsonBuilder().setPrettyPrinting().create().toJson(settings, writer);
+                }
+                showSuccessAlert("设置已备份到: " + backupFile.getPath());
+            } catch (IOException ex) {
+                showErrorAlert("备份设置失败: " + ex.getMessage());
+            }
+        });
+        
+        restoreButton = new Button("恢复设置");
+        restoreButton.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("选择备份文件");
+            fileChooser.setInitialDirectory(new File("backups"));
+            fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("备份文件", "*.json")
+            );
+            File file = fileChooser.showOpenDialog(getScene().getWindow());
+            if (file != null) {
+                try {
+                    Settings restoredSettings;
+                    try (Reader reader = Files.newBufferedReader(file.toPath())) {
+                        restoredSettings = new GsonBuilder().setPrettyPrinting().create().fromJson(reader, Settings.class);
+                    }
+                    SettingsManager.saveSettings(restoredSettings);
+                    showSuccessAlert("设置已恢复，请重启应用以应用更改");
+                } catch (IOException ex) {
+                    showErrorAlert("恢复设置失败: " + ex.getMessage());
+                }
+            }
+        });
+        
+        backupBox.getChildren().addAll(backupButton, restoreButton);
+
+        // 添加性能监控和日志查看按钮
+        HBox monitorBox = new HBox(10);
+        monitorBox.setAlignment(Pos.CENTER);
+        
+        monitorButton = new Button("性能监控");
+        monitorButton.setOnAction(e -> {
+            if (monitorStage == null) {
+                monitorStage = new Stage();
+                monitorStage.setTitle("启动器性能监控");
+                
+                VBox monitorContent = new VBox(10);
+                monitorContent.setPadding(new Insets(15));
+                
+                Label cpuLabel = new Label("CPU使用率: 0%");
+                Label memoryLabel = new Label("内存使用: 0MB");
+                Label diskLabel = new Label("磁盘使用: 0MB");
+                
+                javafx.scene.chart.LineChart<Number, Number> chart = createPerformanceChart();
+                
+                monitorContent.getChildren().addAll(
+                    cpuLabel, memoryLabel, diskLabel, chart
+                );
+                
+                Scene monitorScene = new Scene(monitorContent, 600, 400);
+                monitorStage.setScene(monitorScene);
+                
+                // 启动性能数据更新任务
+                java.util.Timer timer = new java.util.Timer(true);
+                timer.scheduleAtFixedRate(new java.util.TimerTask() {
+                    @Override
+                    public void run() {
+                        Platform.runLater(() -> {
+                            // 更新性能数据
+                            updatePerformanceData(cpuLabel, memoryLabel, diskLabel, chart);
+                        });
+                    }
+                }, 0, 1000);
+                
+                monitorStage.setOnCloseRequest(event -> timer.cancel());
+            }
+            monitorStage.show();
+        });
+        
+        logViewerButton = new Button("日志查看");
+        logViewerButton.setOnAction(e -> {
+            if (logViewerStage == null) {
+                logViewerStage = new Stage();
+                logViewerStage.setTitle("启动器日志查看");
+                
+                VBox logContent = new VBox(10);
+                logContent.setPadding(new Insets(15));
+                
+                TextArea logArea = new TextArea();
+                logArea.setEditable(false);
+                logArea.setWrapText(true);
+                logArea.setPrefRowCount(20);
+                
+                Button refreshLogButton = new Button("刷新日志");
+                refreshLogButton.setOnAction(event -> {
+                    loadLatestLog(logArea);
+                });
+                
+                logContent.getChildren().addAll(refreshLogButton, logArea);
+                
+                Scene logScene = new Scene(logContent, 600, 400);
+                logViewerStage.setScene(logScene);
+                
+                // 初始加载日志
+                loadLatestLog(logArea);
+            }
+            logViewerStage.show();
+        });
+        
+        monitorBox.getChildren().addAll(monitorButton, logViewerButton);
+
+        // 添加剩余组件到布局
         contentBox.getChildren().addAll(
-            titleLabel,
-            javaPathLabel, javaPathBox,
-            maxMemoryLabel, memoryBox,
-            jvmArgsLabel, jvmArgsField,
-            jvmPresetPane,
-            gameArgsLabel, gameArgsField,
-            gamePresetPane,
-            themeLabel, themeComboBox,
+            navigationPositionLabel, navigationPositionBox,
             styleLabel, styleComboBox,
+            customThemeButton,
             backgroundLabel, backgroundBox,  // 添加背景设置
             minecraftPathLabel, minecraftPathBox,
+            backupBox,
+            monitorBox,  // 添加性能监控和日志查看按钮
             saveButton
         );
 
-        setContent(contentBox);
+        // 内容已经设置在initializeLayout中，不需要重复设置
+        // setContent(contentBox);
         // 设置保存按钮事件
         saveButton.setOnAction(event -> saveSettings());
     }
@@ -380,6 +682,13 @@ public class SettingsView extends ScrollPane {
 
 
     private ComboBox<String> styleComboBox;
+    private Button customThemeButton;
+    private Button backupButton;
+    private Button restoreButton;
+    private Button monitorButton;
+    private Button logViewerButton;
+    private Stage monitorStage;
+    private Stage logViewerStage;
     
     private void updateThemeAndBackground() {
         try {
@@ -434,6 +743,96 @@ public class SettingsView extends ScrollPane {
             setStyle(styleString);
         } else {
             setStyle("");
+        }
+    }
+
+    private javafx.scene.chart.LineChart<Number, Number> createPerformanceChart() {
+        javafx.scene.chart.NumberAxis xAxis = new javafx.scene.chart.NumberAxis();
+        javafx.scene.chart.NumberAxis yAxis = new javafx.scene.chart.NumberAxis();
+        xAxis.setLabel("时间(秒)");
+        yAxis.setLabel("使用率(%)");
+        
+        javafx.scene.chart.LineChart<Number, Number> lineChart = new javafx.scene.chart.LineChart<>(xAxis, yAxis);
+        lineChart.setTitle("性能监控");
+        lineChart.setAnimated(false);
+        
+        // 添加CPU和内存数据系列
+        javafx.scene.chart.XYChart.Series<Number, Number> cpuSeries = new javafx.scene.chart.XYChart.Series<>();
+        cpuSeries.setName("CPU使用率");
+        javafx.scene.chart.XYChart.Series<Number, Number> memorySeries = new javafx.scene.chart.XYChart.Series<>();
+        memorySeries.setName("内存使用率");
+        
+        lineChart.getData().addAll(cpuSeries, memorySeries);
+        return lineChart;
+    }
+    
+    private Label cpuLabel;
+    private Label memoryLabel;
+    private Label diskLabel;
+    private javafx.scene.chart.LineChart<Number, Number> chart;
+
+    private void updatePerformanceData(Label cpuLabel, Label memoryLabel, Label diskLabel, 
+                                      javafx.scene.chart.LineChart<Number, Number> chart) {
+        // 获取系统性能数据
+        com.sun.management.OperatingSystemMXBean osBean = 
+            (com.sun.management.OperatingSystemMXBean) java.lang.management.ManagementFactory.getOperatingSystemMXBean();
+        
+        // 更新CPU使用率
+        double cpuLoad = osBean.getSystemCpuLoad() * 100;
+        cpuLabel.setText(String.format("CPU使用率: %.1f%%", cpuLoad));
+        
+        // 更新内存使用情况
+        long totalMemory = osBean.getTotalPhysicalMemorySize();
+        long freeMemory = osBean.getFreePhysicalMemorySize();
+        long usedMemory = totalMemory - freeMemory;
+        memoryLabel.setText(String.format("内存使用: %.1fGB", usedMemory / (1024.0 * 1024 * 1024)));
+        
+        // 更新磁盘使用情况
+        File gameDir = new File(minecraftPathField.getText());
+        if (gameDir.exists()) {
+            long totalSpace = gameDir.getTotalSpace();
+            long freeSpace = gameDir.getFreeSpace();
+            long usedSpace = totalSpace - freeSpace;
+            diskLabel.setText(String.format("磁盘使用: %.1fGB", usedSpace / (1024.0 * 1024 * 1024)));
+        }
+        
+        // 更新图表数据
+        if (!chart.getData().isEmpty()) {
+            javafx.scene.chart.XYChart.Series<Number, Number> cpuSeries = chart.getData().get(0);
+            javafx.scene.chart.XYChart.Series<Number, Number> memorySeries = chart.getData().get(1);
+            
+            // 添加新数据点
+            int timePoint = cpuSeries.getData().size();
+            cpuSeries.getData().add(new javafx.scene.chart.XYChart.Data<>(timePoint, cpuLoad));
+            memorySeries.getData().add(new javafx.scene.chart.XYChart.Data<>(timePoint, 
+                (double) usedMemory / totalMemory * 100));
+            
+            // 保持最近30个数据点
+            if (cpuSeries.getData().size() > 30) {
+                cpuSeries.getData().remove(0);
+                memorySeries.getData().remove(0);
+            }
+        }
+        
+        // 更新类成员变量
+        this.cpuLabel = cpuLabel;
+        this.memoryLabel = memoryLabel;
+        this.diskLabel = diskLabel;
+        this.chart = chart;
+    }
+    
+    private void loadLatestLog(TextArea logArea) {
+        try {
+            File logFile = new File("logs/latest.log");
+            if (logFile.exists()) {
+                String content = new String(java.nio.file.Files.readAllBytes(logFile.toPath()));
+                logArea.setText(content);
+                logArea.positionCaret(content.length()); // 滚动到底部
+            } else {
+                logArea.setText("未找到日志文件");
+            }
+        } catch (IOException e) {
+            logArea.setText("读取日志失败: " + e.getMessage());
         }
     }
 }

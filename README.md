@@ -27,6 +27,8 @@ mvn clean package
 
 ### 方法一：使用脚本运行
 
+使用根目录下的run.sh或者run.bat脚本运行。
+
 新建 run.bat 文件，内容如下：
 
 ```

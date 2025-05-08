@@ -16,6 +16,7 @@ public class Settings implements Serializable {
     private String theme; // light, dark, custom
     private String minecraftPath;
     private String selectedVersion; // 添加用于存储所选版本的字段
+    private String navigationPosition; // 导航栏位置：left, top, bottom
 
     public Settings() {
         // 默认值
@@ -25,6 +26,7 @@ public class Settings implements Serializable {
         this.gameArgs = "";
         this.theme = "默认主题";
         this.minecraftPath = System.getProperty("user.home") + "/.minecraft";
+        this.navigationPosition = "left"; // 默认为左侧
     }
     
     public String getJavaPath() {
@@ -90,5 +92,13 @@ public class Settings implements Serializable {
 
     public String getSelectedVersion() {
         return selectedVersion; // 修改 getSelectedVersion 方法以返回存储的值
+    }
+
+    public String getNavigationPosition() {
+        return navigationPosition != null ? navigationPosition : "left";
+    }
+
+    public void setNavigationPosition(String navigationPosition) {
+        this.navigationPosition = navigationPosition;
     }
 }

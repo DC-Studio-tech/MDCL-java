@@ -299,7 +299,7 @@ public class MultiplayerView extends BorderPane {
     }
 
     // Custom ListCell implementation
-    private static class ServerListCell extends ListCell<ServerInfo> {
+    private class ServerListCell extends ListCell<ServerInfo> {
         private final HBox contentBox = new HBox(10); // Use HBox for layout
         private final VBox nameIpBox = new VBox(2); // VBox for name and IP
         private final Text serverName = new Text();

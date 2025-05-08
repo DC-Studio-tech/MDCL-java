@@ -8,6 +8,7 @@ public class Settings {
     private String theme;
     private String minecraftPath;
     private String backgroundImage;
+    private String navigationPosition;
 
     public Settings() {
         this.maxMemory = 2;
@@ -41,5 +42,13 @@ public class Settings {
     
     public void setBackgroundImage(String backgroundImage) {
         this.backgroundImage = backgroundImage;
+    }
+
+    public String getNavigationPosition() {
+        return navigationPosition != null ? navigationPosition : "left";
+    }
+
+    public void setNavigationPosition(String navigationPosition) {
+        this.navigationPosition = navigationPosition;
     }
 }

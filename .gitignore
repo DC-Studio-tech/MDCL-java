@@ -36,3 +36,26 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+# Ignore JDKs and large binaries
+*.dylib
+*.so
+*.dll
+*.jar
+*.zip
+*.tar.gz
+*.7z
+*.bin
+*.class
+
+# Specific to your case:
+graalvm-jdk*/
+jdk*/
+jre*/
+dependency-reduced-pom.xml
+jmccc-temp/
+backups/
+launcher_settings.dat
+settings.json
+run.bat
+run.sh

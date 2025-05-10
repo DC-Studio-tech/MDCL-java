@@ -1,9 +1,0 @@
-{
-  "javaPath": "/Library/Java/JavaVirtualMachines/jdk-21.jdk/Contents/Home/bin/java",
-  "maxMemory": 2,
-  "jvmArgs": "",
-  "gameArgs": "",
-  "theme": "默认主题",
-  "minecraftPath": "/Users/zhuangweiwei/.minecraft",
-  "backgroundImage": "/Users/zhuangweiwei/Desktop/1.jpg"
-}

@@ -214,3 +214,12 @@ import java.util.ArrayList;
          return gameProcess != null && gameProcess.isAlive();
      }
  }
+
+// 在launchGame方法中添加更多的预检查
+// 例如检查磁盘空间是否足够
+File minecraftFolder = minecraftDir.getRoot();
+long freeSpace = minecraftFolder.getFreeSpace();
+long requiredSpace = 200 * 1024 * 1024; // 假设需要200MB空间
+if (freeSpace < requiredSpace) {
+    throw new LaunchException("磁盘空间不足，至少需要" + (requiredSpace / (1024 * 1024)) + "MB可用空间");
+}

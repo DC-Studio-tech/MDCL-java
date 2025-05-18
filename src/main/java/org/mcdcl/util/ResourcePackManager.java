@@ -34,15 +34,50 @@ public class ResourcePackManager {
             // 确保目录存在
             resourcePackDir.mkdirs();
             
-            // TODO: 实现实际的资源包下载逻辑
-            // 这里暂时使用模拟下载
-            for (double progress = 0; progress <= 1; progress += 0.1) {
-                Thread.sleep(500);
-                progressCallback.accept(progress);
+            // 查找资源包下载链接
+            URL url = new URL(RESOURCE_PACK_API);
+            JSONObject json = new JSONObject(new String(url.openStream().readAllBytes()));
+            JSONArray hits = json.getJSONArray("hits");
+            
+            String downloadUrl = null;
+            for (int i = 0; i < hits.length(); i++) {
+                JSONObject pack = hits.getJSONObject(i);
+                if (pack.getString("title").equals(packName)) {
+                    // 假设API返回的结构中包含下载链接
+                    downloadUrl = pack.getString("download_url");
+                    break;
+                }
             }
             
+            if (downloadUrl == null) {
+                throw new IOException("找不到资源包: " + packName);
+            }
+            
+            // 执行下载
+            URL packUrl = new URL(downloadUrl);
+            String fileName = packName.replaceAll("[^a-zA-Z0-9.-]", "_") + ".zip";
+            File outputFile = new File(resourcePackDir, fileName);
+            
+            try (InputStream in = packUrl.openStream();
+                 FileOutputStream out = new FileOutputStream(outputFile)) {
+                
+                byte[] buffer = new byte[8192];
+                long totalBytes = 0;
+                int bytesRead;
+                long fileSize = packUrl.openConnection().getContentLengthLong();
+                
+                while ((bytesRead = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, bytesRead);
+                    totalBytes += bytesRead;
+                    
+                    if (fileSize > 0) {
+                        double progress = (double) totalBytes / fileSize;
+                        progressCallback.accept(progress);
+                    }
+                }
+            }
         } catch (Exception e) {
-            throw new IOException("下载资源包失败: " + e.getMessage());
+            throw new IOException("下载资源包失败: " + e.getMessage(), e);
         }
     }
 }

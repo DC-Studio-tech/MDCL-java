@@ -345,9 +345,36 @@ public class MultiplayerView extends BorderPane {
     }
     
     private boolean validateKey(String key) {
-        // 简单验证密钥格式
-        return key != null && key.length() == 16 && 
-               key.matches("^[a-zA-Z0-9]+$");
+        // 更强的密钥验证
+        if (key == null || key.isEmpty()) {
+            return false;
+        }
+        
+        // 检查长度
+        if (key.length() < 16 || key.length() > 32) {
+            return false;
+        }
+        
+        // 检查格式 - 要求包含字母和数字的组合
+        boolean hasLetter = false;
+        boolean hasDigit = false;
+        
+        for (char c : key.toCharArray()) {
+            if (Character.isLetter(c)) {
+                hasLetter = true;
+            } else if (Character.isDigit(c)) {
+                hasDigit = true;
+            } else if (!Character.isLetterOrDigit(c)) {
+                // 不允许特殊字符
+                return false;
+            }
+            
+            if (hasLetter && hasDigit) {
+                break;
+            }
+        }
+        
+        return hasLetter && hasDigit;
     }
     
     private String establishP2PConnection(String key) throws Exception {

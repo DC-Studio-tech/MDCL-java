@@ -101,6 +101,20 @@ public class ErrorView extends BorderPane {
             scrollPane
         );
         
+        // 在initUI方法中添加常见问题解决建议
+        Label helpLabel = new Label("常见解决方法：");
+        helpLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
+        
+        VBox helpBox = new VBox(5);
+        helpBox.getChildren().addAll(
+            new Label("1. 检查Java版本是否与游戏版本兼容"),
+            new Label("2. 确保网络连接正常"),
+            new Label("3. 检查是否有足够的磁盘空间"),
+            new Label("4. 尝试重新下载游戏文件")
+        );
+        
+        // 将帮助信息添加到界面
+        centerBox.getChildren().addAll(helpLabel, helpBox);
         setTop(topBox);
         setCenter(centerBox);
         setBottom(buttonBox);
